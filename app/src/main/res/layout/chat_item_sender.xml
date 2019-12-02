@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="3dp">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profile_image"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+
+
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        android:src="@mipmap/ic_launcher_round"
+        app:layout_constraintBottom_toBottomOf="@id/message_container"
+        app:layout_constraintEnd_toEndOf="parent"
+         />
+    <LinearLayout
+            android:layout_marginEnd="3dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/message_container"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/profile_image"
+            app:layout_constraintTop_toTopOf="parent"
+            android:background="@drawable/background_sender"
+            android:padding="3dp"
+
+
+
+    >
+
+    <TextView
+        android:id="@+id/show_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="8dp"
+        android:background="@drawable/background_sender"
+        android:padding="8dp"
+        android:textColor="#FFF"
+        android:textSize="15dp"
+        android:visibility="gone"
+        android:text=""
+        android:maxWidth="220dp"
+         />
+        <com.dmallcott.dismissibleimageview.DismissibleImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/show_image"
+                android:visibility="visible"
+                android:maxHeight="200dp"
+                android:maxWidth="200dp"
+                android:adjustViewBounds="true"
+                android:src="@drawable/asd"
+
+
+
+        />
+    </LinearLayout>
+
+    <TextView
+            android:text="seen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/txt_seen"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/message_container"
+            android:visibility="visible"
+            android:layout_marginRight="55dp"
+
+    />
+</androidx.constraintlayout.widget.ConstraintLayout>
