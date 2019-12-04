@@ -1,4 +1,4 @@
-package com.example.android.kotlinchatapp.adapter
+package com.example.android.kotlinchatapp.message_activity.adapter
 
 import android.content.Context
 import androidx.recyclerview.widget.RecyclerView
@@ -16,16 +16,17 @@ import com.example.android.kotlinchatapp.Model.Chat
 import com.example.android.kotlinchatapp.Model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import android.widget.LinearLayout
-import com.dmallcott.dismissibleimageview.DismissibleImageView
 import com.example.android.kotlinchatapp.R
+import com.example.android.kotlinchatapp.message_activity.OnClickItem
 
 
 class MessageAdapter(private val mContext: Context, private val mChats: List<Chat>, private val userImgURL: String,private val currentUser: User) : RecyclerView.Adapter<MessageAdapter.ViewHolder>() {
 
     internal var firebaseUser: FirebaseUser? = null
-
+    lateinit var onClickItem: OnClickItem
+    lateinit var context: Context
     override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): ViewHolder {
+        context=viewGroup.context
         if (i == MSG_TYPE_SENDER) {
             val view = LayoutInflater.from(mContext).inflate(R.layout.chat_item_sender, viewGroup, false)
             val holder=ViewHolder(view)
@@ -43,6 +44,11 @@ class MessageAdapter(private val mContext: Context, private val mChats: List<Cha
             viewHolder.show_image.visibility=VISIBLE
             viewHolder.show_message.visibility= GONE
             Glide.with(mContext).load(chat.message).into(viewHolder.show_image)
+            viewHolder.show_image.setOnClickListener {
+                onClickItem.onClick(chat.message!!,viewHolder.show_image)
+                viewHolder.show_message.transitionName=context.getString(R.string.message_photo)
+            }
+
         }
         else{
             viewHolder.show_image.visibility=GONE

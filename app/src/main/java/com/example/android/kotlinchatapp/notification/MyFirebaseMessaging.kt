@@ -7,7 +7,7 @@ import android.content.Intent
 import android.media.RingtoneManager
 import android.os.Bundle
 import androidx.core.app.NotificationCompat
-import com.example.android.kotlinchatapp.activities.MessageActivity
+import com.example.android.kotlinchatapp.message_activity.MessageActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage

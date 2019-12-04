@@ -5,7 +5,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#c6c6c6"
-        tools:context=".activities.MessageActivity">
+        tools:context=".message_activity.MessageActivity">
 
 
     <com.google.android.material.appbar.AppBarLayout
@@ -41,7 +41,7 @@
                         android:id="@+id/username"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="25dp"
+                        android:layout_marginStart="10dp"
                         android:text=""
                         android:textColor="#fff"
                         android:textSize="15dp"
@@ -52,7 +52,7 @@
                         android:id="@+id/userStatus"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="25dp"
+                        android:layout_marginStart="10dp"
                         android:text=""
                         android:textColor="#CCCACA"
                         android:textSize="12dp"
@@ -111,6 +111,7 @@
                 >
 
             <EditText
+                    android:layout_marginStart="5dp"
                     android:id="@+id/text_send"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -130,7 +131,7 @@
 
         <ImageButton
                 android:id="@+id/btn_send"
-                android:layout_width="40dp"
+                android:layout_width="35dp"
                 android:layout_height="40dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"

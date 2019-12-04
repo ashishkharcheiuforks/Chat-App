@@ -144,8 +144,8 @@ class MainActivity : AppCompatActivity() {
         user?.imageURL=path.toString()
         Log.e("userim",user.imageURL.toString())
         val hashMap=HashMap<String,String>()
-        hashMap?.put("id",user.id)
-        hashMap?.put("userName",user.userName)
+        hashMap?.put("id",user.id!!)
+        hashMap?.put("userName",user.userName!!)
 
         hashMap?.put("imageURL",path)
         //val hash=user.to

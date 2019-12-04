@@ -16,7 +16,7 @@ import com.bumptech.glide.Glide
 import com.example.android.kotlinchatapp.Model.User
 import com.example.android.kotlinchatapp.R
 import com.example.android.kotlinchatapp.fragments.ChatsFragment
-import com.example.android.kotlinchatapp.fragments.ProfileFragment
+import com.example.android.kotlinchatapp.profile.ProfileFragment
 import com.example.android.kotlinchatapp.fragments.UsersFragment
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.auth.FirebaseAuth

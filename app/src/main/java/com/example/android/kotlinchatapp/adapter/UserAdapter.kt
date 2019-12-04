@@ -12,7 +12,7 @@ import android.widget.ImageView
 import android.widget.TextView
 
 import com.bumptech.glide.Glide
-import com.example.android.kotlinchatapp.activities.MessageActivity
+import com.example.android.kotlinchatapp.message_activity.MessageActivity
 import com.example.android.kotlinchatapp.Model.User
 import com.example.android.kotlinchatapp.R
 import kotlinx.android.synthetic.main.user_item.view.*

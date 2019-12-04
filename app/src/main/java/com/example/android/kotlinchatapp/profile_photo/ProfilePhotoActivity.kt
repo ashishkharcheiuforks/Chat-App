@@ -12,7 +12,19 @@ class ProfilePhotoActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile_photo)
         title="Profile Image"
-//        actionBar.setDisplayShowHomeEnabled(true)
-        intent.getStringExtra("profilePhoto")?.let { Glide.with(this).load(it).into(imageView) }
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        intent.getStringExtra(profilePhoto)?.let { Glide.with(this).load(it).into(imageView) }
+        if (!intent.getBooleanExtra(isProfileImage,false))
+            title=""
+    }
+    companion object{
+        val profilePhoto="profilePhoto"
+        val isProfileImage="isProfileImage"
+        val transitionName="transitionName"
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return super.onSupportNavigateUp()
     }
 }

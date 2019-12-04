@@ -18,7 +18,7 @@
                 android:name=".activities.ResetPasswordActivity"
                 android:parentActivityName=".activities.LoginActivity"></activity>
         <activity
-                android:name=".activities.MessageActivity"
+                android:name=".message_activity.MessageActivity"
                 android:parentActivityName=".activities.HomeActivity"
                 android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
