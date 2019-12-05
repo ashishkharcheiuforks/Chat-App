@@ -33,10 +33,12 @@ class UserProfileActivity : AppCompatActivity() {
         val adapter=ImagesAdapter(images)
         binding.imagesRv.adapter=adapter
         userProfileViewModel.images.observe(this, Observer {
-            binding.media.visibility=VISIBLE
-            images.clear()
-            images.addAll(it)
-            adapter.notifyDataSetChanged()
+            if (!it.isEmpty()){
+                binding.media.visibility=VISIBLE
+                images.clear()
+                images.addAll(it)
+                adapter.notifyDataSetChanged()
+            }
         })
         adapter.onItemClick=object:OnItemClick{
             override fun onClick(path: String, image: View) {

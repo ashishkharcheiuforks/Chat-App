@@ -23,7 +23,7 @@
                     android:layout_width="0dp"
                     android:layout_height="@dimen/_100sdp"
                     app:srcCompat="@drawable/logo"
-                    android:scaleType="centerCrop"
+                    android:scaleType="center"
                     android:id="@+id/imageView30"
                     app:image="@{chat.message}"
                     android:transitionName="@{chat.message}"
