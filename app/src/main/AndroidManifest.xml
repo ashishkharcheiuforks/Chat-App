@@ -9,27 +9,29 @@
             android:roundIcon="@drawable/logo"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
-        <activity android:name=".profile_photo.ProfilePhotoActivity"
-                android:theme="@style/ProfilePhotoTheme"></activity>
+        <activity android:name="com.example.android.kotlinchatapp.ui.user_profile.UserProfileActivity"></activity>
         <activity
-                android:name=".activities.OpenImageActivity"
-                android:theme="@style/AppTheme.NoActionBar"></activity>
+                android:name="com.example.android.kotlinchatapp.ui.profile_photo.ProfilePhotoActivity"
+                android:theme="@style/ProfilePhotoTheme" />
         <activity
-                android:name=".activities.ResetPasswordActivity"
-                android:parentActivityName=".activities.LoginActivity"></activity>
+                android:name="com.example.android.kotlinchatapp.ui.activities.OpenImageActivity"
+                android:theme="@style/AppTheme.NoActionBar" />
         <activity
-                android:name=".message_activity.MessageActivity"
-                android:parentActivityName=".activities.HomeActivity"
-                android:theme="@style/AppTheme.NoActionBar"></activity>
+                android:name="com.example.android.kotlinchatapp.ui.activities.ResetPasswordActivity"
+                android:parentActivityName="com.example.android.kotlinchatapp.ui.activities.LoginActivity" />
         <activity
-                android:name=".activities.HomeActivity"
+                android:name="com.example.android.kotlinchatapp.ui.message_activity.MessageActivity"
+                android:parentActivityName="com.example.android.kotlinchatapp.ui.activities.HomeActivity"
+                android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+                android:name="com.example.android.kotlinchatapp.ui.activities.HomeActivity"
                 android:label="@string/title_activity_home"
-                android:theme="@style/AppTheme.NoActionBar"></activity> <!-- <service -->
+                android:theme="@style/AppTheme.NoActionBar" /> <!-- <service -->
         <!-- android:name=".MyService" -->
         <!-- android:enabled="true" -->
         <!-- android:exported="true"> -->
         <!-- </service> -->
-        <activity android:name=".activities.LoginActivity">
+        <activity android:name="com.example.android.kotlinchatapp.ui.activities.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -37,14 +39,14 @@
             </intent-filter>
         </activity>
         <activity
-                android:name=".activities.RegisterActivity"
-                android:parentActivityName=".activities.LoginActivity"></activity>
+                android:name="com.example.android.kotlinchatapp.ui.activities.RegisterActivity"
+                android:parentActivityName="com.example.android.kotlinchatapp.ui.activities.LoginActivity" />
         <activity
-                android:name=".activities.MainActivity"
-                android:theme="@style/AppTheme"></activity>
+                android:name="com.example.android.kotlinchatapp.ui.activities.MainActivity"
+                android:theme="@style/AppTheme" />
 
         <service
-                android:name=".notification.MyFirebaseIdService"
+                android:name="com.example.android.kotlinchatapp.ui.notification.MyFirebaseIdService"
                 android:enabled="true"
                 android:exported="true">
             <intent-filter>
@@ -52,7 +54,7 @@
             </intent-filter>
         </service>
         <service
-                android:name=".notification.MyFirebaseMessaging"
+                android:name="com.example.android.kotlinchatapp.ui.notification.MyFirebaseMessaging"
                 android:enabled="true"
                 android:exported="true">
             <intent-filter>

@@ -5,7 +5,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#c6c6c6"
-        tools:context=".message_activity.MessageActivity">
+        tools:context=".ui.message_activity.MessageActivity">
 
 
     <com.google.android.material.appbar.AppBarLayout
@@ -29,10 +29,11 @@
                     android:id="@+id/profile_image"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-
+                    android:transitionName="@string/profile_photo"
                     />
 
             <LinearLayout
+                    android:id="@+id/data_container"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
@@ -45,6 +46,7 @@
                         android:text=""
                         android:textColor="#fff"
                         android:textSize="15dp"
+                        android:transitionName="@string/userName"
                         android:textStyle="bold"
                         tools:text="george" />
 
@@ -54,6 +56,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:text=""
+                        android:transitionName="@string/userStatus"
                         android:textColor="#CCCACA"
                         android:textSize="12dp"
                         tools:text="online" />

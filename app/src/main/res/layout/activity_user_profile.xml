@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+                name="vm"
+                type="com.example.android.kotlinchatapp.ui.user_profile.UserProfileViewModel"
+            />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".ui.user_profile.UserProfileActivity">
+
+        <ImageView
+                android:id="@+id/userImage"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_200sdp"
+                android:src="@color/warningColor"
+                app:image="@{vm.user.imageURL}"
+                android:scaleType="centerCrop"
+                android:transitionName="@string/profile_photo"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+                android:id="@+id/backArrow"
+                android:layout_width="@dimen/_30sdp"
+                android:layout_height="@dimen/_30sdp"
+                android:src="@drawable/back_arrow"
+                app:layout_constraintStart_toStartOf="@id/start_guideline21"
+                app:layout_constraintTop_toTopOf="@id/top_guideline21" />
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{vm.user.userName}"
+                android:textColor="#ffffff"
+                android:textSize="@dimen/_22ssp"
+                android:textStyle="bold"
+                android:transitionName="@string/userName"
+                app:layout_constraintBottom_toTopOf="@id/userStatus"
+                app:layout_constraintStart_toStartOf="@id/start_guideline21"
+                tools:text="george hany" />
+
+        <TextView
+                android:id="@+id/userStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#ffffff"
+                android:transitionName="@string/userStatus"
+                app:layout_constraintBottom_toBottomOf="@id/userImage"
+                app:layout_constraintStart_toStartOf="@id/start_guideline21"
+                tools:text="online"
+                android:text="@{vm.user.currentStatus}"/>
+        <RelativeLayout
+                android:id="@+id/bio_container"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                app:layout_constraintEnd_toEndOf="@id/end_guideline"
+                app:layout_constraintStart_toStartOf="@id/start_guideline21"
+                app:layout_constraintTop_toBottomOf="@id/userImage">
+
+            <ImageView
+                    android:id="@+id/bio_icon"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/bio_icon" />
+
+            <TextView
+                    android:id="@+id/bio_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="7dp"
+                    android:layout_toEndOf="@id/bio_icon"
+                    android:text="Bio"
+                    android:textColor="#000000"
+                    android:textStyle="bold" />
+
+            <TextView
+                    android:id="@+id/bio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/bio_txt"
+                    android:layout_marginStart="7dp"
+                    android:layout_toEndOf="@id/bio_icon"
+                    tools:text="george hany"
+                    android:text="@{vm.user.bio}"/>
+        </RelativeLayout>
+        <RelativeLayout
+                android:id="@+id/phone_container"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                app:layout_constraintEnd_toEndOf="@id/end_guideline"
+                app:layout_constraintStart_toStartOf="@id/start_guideline21"
+                app:layout_constraintTop_toBottomOf="@id/bio_container">
+
+            <ImageView
+                    android:id="@+id/phone_icon"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/phone_number" />
+
+            <TextView
+                    android:id="@+id/phone_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="7dp"
+                    android:layout_toEndOf="@id/phone_icon"
+                    android:text="Phone"
+                    android:textColor="#000000"
+                    android:textStyle="bold" />
+
+            <TextView
+                    android:id="@+id/phone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/phone_txt"
+                    android:layout_marginStart="7dp"
+                    android:layout_toEndOf="@id/phone_icon"
+                    tools:text="george hany"
+                    android:text="@{vm.user.phone}"/>
+        </RelativeLayout>
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/phone_container"
+                app:layout_constraintStart_toStartOf="@id/start_guideline21"
+                android:text="Media"
+                android:visibility="invisible"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:textStyle="bold"
+                android:textColor="#000000"
+                android:id="@+id/media"
+            />
+        <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/images_rv"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintStart_toStartOf="@id/start_guideline21"
+                app:layout_constraintEnd_toEndOf="@id/end_guideline"
+                app:layout_constraintTop_toBottomOf="@id/media"
+                app:layout_constraintBottom_toBottomOf="@id/bottom_guideline20"
+                android:layout_marginTop="@dimen/_5sdp"
+                tools:listitem="@layout/item_user_images"
+                app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
+                app:spanCount="3"
+                />
+
+        <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/end_guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_end="20dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/start_guideline21"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_begin="20dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/bottom_guideline20"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_end="20dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/top_guideline21"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_begin="20dp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
