@@ -15,12 +15,26 @@ import com.bumptech.glide.Glide
 import com.example.android.kotlinchatapp.ui.message_activity.MessageActivity
 import com.example.android.kotlinchatapp.ui.model.User
 import com.example.android.kotlinchatapp.R
+import com.example.android.kotlinchatapp.ui.model.Chat
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import kotlinx.android.synthetic.main.user_item.view.*
 
 
-class UserAdapter(private val mContext: Context?, private val users: List<User>,private val isChat:Boolean) : RecyclerView.Adapter<UserAdapter.ViewHolder>() {
-
+class UserAdapter(
+    private val mContext: Context?,
+    private val users: List<User>,
+    private val isChat: Boolean
+) : RecyclerView.Adapter<UserAdapter.ViewHolder>() {
+    val firebaseUser = FirebaseAuth.getInstance().currentUser
+    val refrence = FirebaseDatabase.getInstance().getReference("Chats")
+    val myId = firebaseUser!!.uid
+    lateinit var con: Context
     override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): ViewHolder {
+        con = viewGroup.context
         val view = LayoutInflater.from(mContext).inflate(R.layout.user_item, viewGroup, false)
         val holder = ViewHolder(view)
         return holder
@@ -29,30 +43,32 @@ class UserAdapter(private val mContext: Context?, private val users: List<User>,
     override fun onBindViewHolder(viewHolder: ViewHolder, i: Int) {
         val user = users.get(i)
         viewHolder.username.text = user.userName
-        if (user.imageURL == "default") {
-            viewHolder.profile_image.setImageResource(R.mipmap.ic_launcher_round)
-        } else
-            Glide.with(mContext!!).load(user.imageURL).into(viewHolder.profile_image).waitForLayout()
+//        if (user.imageURL == "default") {
+//            viewHolder.profile_image.setImageResource(R.mipmap.ic_launcher_round)
+//        } else
+        Glide.with(mContext!!).load(user.imageURL).error(R.drawable.profile_default_icon)
+            .into(viewHolder.profile_image).waitForLayout()
 
-        if (isChat){
-            if (user.status.equals("online")){
+        if (isChat) {
+            if (user.status.equals("online")) {
                 viewHolder.img_online.visibility = VISIBLE
-                viewHolder.img_offline.visibility= GONE
-            }
-            else{
+                viewHolder.img_offline.visibility = GONE
+            } else {
                 viewHolder.img_online.visibility = GONE
-                viewHolder.img_offline.visibility= VISIBLE
+                viewHolder.img_offline.visibility = VISIBLE
             }
-        }
-        else{
+            getLastMessage(users[i].id!!, viewHolder.lastMessage)
+            viewHolder.lastMessage.visibility = VISIBLE
+
+        } else {
             viewHolder.img_online.visibility = GONE
-            viewHolder.img_offline.visibility= GONE
+            viewHolder.img_offline.visibility = GONE
         }
 
         viewHolder.itemView.setOnClickListener {
             val i = Intent(mContext, MessageActivity::class.java)
             i.putExtra("userid", user.id)
-            i.putExtra("imageURL",user.imageURL)
+            i.putExtra("imageURL", user.imageURL)
             mContext!!.startActivity(i)
         }
 
@@ -66,13 +82,53 @@ class UserAdapter(private val mContext: Context?, private val users: List<User>,
 
         var username: TextView
         var profile_image: ImageView
-        var img_online:ImageView
-        var img_offline:ImageView
+        var img_online: ImageView
+        var img_offline: ImageView
+        var lastMessage: TextView
+
         init {
             username = itemView.user_name
             profile_image = itemView.profile_image
             img_offline = itemView.img_offline
             img_online = itemView.img_online
+            lastMessage = itemView.lastMessage
         }
+    }
+
+    fun getLastMessage(userId: String, last_msg: TextView) {
+        var lastMessage: Chat? = null
+        refrence.addValueEventListener(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+                for (snapshot in p0.children) {
+                    var chat = snapshot.getValue(Chat::class.java)
+                    if (chat!!.reciever.equals(myId) && chat.sender.equals(userId) || chat.reciever.equals(
+                            userId
+                        ) && chat.sender.equals(myId)
+                    ) {
+                        lastMessage = chat
+                    }
+                }
+                lastMessage?.let {
+                    if (lastMessage!!.type.equals("image")) {
+                        last_msg.text = "Image"
+                        last_msg.setCompoundDrawablesWithIntrinsicBounds(
+                            R.drawable.ic_black_camera,
+                            0,
+                            0,
+                            0
+                        )
+                    } else {
+                        last_msg.text = it.message
+                        last_msg.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
+                    }
+                }
+            }
+
+
+        })
     }
 }

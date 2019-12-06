@@ -15,7 +15,7 @@ import androidx.viewpager.widget.ViewPager
 import com.bumptech.glide.Glide
 import com.example.android.kotlinchatapp.ui.model.User
 import com.example.android.kotlinchatapp.R
-import com.example.android.kotlinchatapp.ui.fragments.ChatsFragment
+import com.example.android.kotlinchatapp.ui.chats.ChatsFragment
 import com.example.android.kotlinchatapp.ui.profile.ProfileFragment
 import com.example.android.kotlinchatapp.ui.fragments.UsersFragment
 import com.google.android.material.tabs.TabLayout
@@ -59,10 +59,10 @@ class HomeActivity : AppCompatActivity() {
 
                 val user = dataSnapshot.getValue(User::class.java)
                 username.text = user!!.userName
-                if (user.imageURL == "default")
-                    profile_image.setImageResource(R.mipmap.ic_launcher_round)
-                else
-                    Glide.with(applicationContext).load(user.imageURL).into(profile_image)
+//                if (user.imageURL == "default")
+//                    profile_image.setImageResource(R.mipmap.ic_launcher_round)
+//                else
+                    Glide.with(applicationContext).load(user.imageURL).error(R.drawable.profile_default_icon).into(profile_image)
 
 
                 //profile_image.setImageResource(R.mipmap.ic_launcher);

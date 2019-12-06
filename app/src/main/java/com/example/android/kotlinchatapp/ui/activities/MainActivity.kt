@@ -59,11 +59,11 @@ class MainActivity : AppCompatActivity() {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 user=dataSnapshot.getValue(User::class.java)!!
                 user_name.text=user?.userName
-                if(user?.imageURL=="default")
-                    profile_image.setImageResource(R.mipmap.ic_launcher_round)
-                else {
-                    Glide.with(this@MainActivity).load(user!!.imageURL).into(profile_image)
-                }
+//                if(user?.imageURL=="default")
+//                    profile_image.setImageResource(R.mipmap.ic_launcher_round)
+//                else {
+                    Glide.with(this@MainActivity).load(user!!.imageURL).error(R.drawable.profile_default_icon).into(profile_image)
+//                }
             }
 
         })

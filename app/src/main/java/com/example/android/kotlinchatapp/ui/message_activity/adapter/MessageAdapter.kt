@@ -43,7 +43,7 @@ class MessageAdapter(private val mContext: Context, private val mChats: List<Cha
         if (chat.type.equals("image")){
             viewHolder.show_image.visibility=VISIBLE
             viewHolder.show_message.visibility= GONE
-            Glide.with(mContext).load(chat.message).into(viewHolder.show_image)
+            Glide.with(mContext).load(chat.message).error(R.drawable.placeholder).into(viewHolder.show_image)
             viewHolder.show_image.setOnClickListener {
                 onClickItem.onClick(chat.message!!,viewHolder.show_image)
                 viewHolder.show_message.transitionName=context.getString(R.string.message_photo)
@@ -58,16 +58,16 @@ class MessageAdapter(private val mContext: Context, private val mChats: List<Cha
 
 
         if (chat.sender.equals(currentUser.id)) {
-            if (userImgURL == ("default"))
-                viewHolder.profile_image.setImageResource(R.mipmap.ic_launcher_round)
-            else
-                Glide.with(mContext).load(currentUser.imageURL).into(viewHolder.profile_image)
+//            if (userImgURL == ("default"))
+//                viewHolder.profile_image.setImageResource(R.mipmap.ic_launcher_round)
+//            else
+                Glide.with(mContext).load(currentUser.imageURL).error(R.drawable.profile_default_icon).into(viewHolder.profile_image)
         }
         else{
-            if (userImgURL == ("default"))
-                viewHolder.profile_image.setImageResource(R.mipmap.ic_launcher_round)
-            else
-                Glide.with(mContext).load(userImgURL).into(viewHolder.profile_image)
+//            if (userImgURL == ("default"))
+//                viewHolder.profile_image.setImageResource(R.mipmap.ic_launcher_round)
+//            else
+                Glide.with(mContext).load(userImgURL).error(R.drawable.profile_default_icon).into(viewHolder.profile_image)
         }
         if (i==mChats.size-1&&chat.sender.equals(currentUser.id)){
             if (chat.isseen!!){

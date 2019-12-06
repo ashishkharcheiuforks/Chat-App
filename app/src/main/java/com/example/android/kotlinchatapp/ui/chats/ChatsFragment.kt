@@ -1,4 +1,4 @@
-package com.example.android.kotlinchatapp.ui.fragments
+package com.example.android.kotlinchatapp.ui.chats
 
 
 import android.os.Bundle

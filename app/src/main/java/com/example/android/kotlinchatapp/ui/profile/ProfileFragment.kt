@@ -131,12 +131,12 @@ class ProfileFragment : Fragment(), ProfileNavigator {
                 v.user_name.text = user.userName
                 v.bio.text = user.bio.let { it } ?: kotlin.run { "" }
                 v.phone.text = user.phone.let { it } ?: kotlin.run { "" }
-                if (user.imageURL == "default")
-                    v.profile_image.setImageResource(R.mipmap.ic_launcher_round)
-                else {
-                    Glide.with(context!!).load(user.imageURL).into(v.profile_image)
+//                if (user.imageURL == "default")
+//                    v.profile_image.setImageResource(R.mipmap.ic_launcher_round)
+//                else {
+                    Glide.with(context!!).load(user.imageURL).error(R.drawable.profile_default_icon).into(v.profile_image)
                         .waitForLayout()
-                }
+//                }
             }
 
         })
