@@ -59,7 +59,7 @@ class ProfileFragment : Fragment(), ProfileNavigator {
     private var storageReference: StorageReference? = null
     lateinit var firebaseUser: FirebaseUser
     lateinit var reference: DatabaseReference
-    lateinit var user: User
+     var user: User= User()
     lateinit var progressDialog: ProgressDialog
     lateinit var profile: CircleImageView
     lateinit var dialog: Dialog
@@ -96,8 +96,9 @@ class ProfileFragment : Fragment(), ProfileNavigator {
         v.profile_image.setOnClickListener {
             if (user.imageURL != "default") {
                 val intent = Intent(context, ProfilePhotoActivity::class.java)
-                intent.putExtra(ProfilePhotoActivity.profilePhoto, user.imageURL)
+                intent.putExtra(ProfilePhotoActivity.profilePhoto, user.imageURL?.let { it }?:"")
                 intent.putExtra(ProfilePhotoActivity.isProfileImage, true)
+                intent.putExtra(ProfilePhotoActivity.transitionName, R.string.profile_photo)
                 val option = ActivityOptionsCompat.makeSceneTransitionAnimation(
                     activity!!,
                     v.profile_image,
@@ -151,21 +152,21 @@ class ProfileFragment : Fragment(), ProfileNavigator {
             "userName" -> {
                 dialog.edit.hint = "enter your name"
                 dialog.edit.filters = arrayOf<InputFilter>(InputFilter.LengthFilter(15))
-                dialog.edit.setText(user.userName)
+                dialog.edit.setText(user.userName?.let {it }?: kotlin.run { "name" })
             }
             "bio" -> {
                 dialog.title.text = "Bio"
                 dialog.edit.hint = "enter your Bio"
                 dialog.edit.filters = arrayOf<InputFilter>(InputFilter.LengthFilter(25))
                 dialog.image.setImageResource(R.drawable.bio_icon)
-                dialog.edit.setText(user.bio)
+                dialog.edit.setText(user.bio?.let {it }?:"bio")
             }
             "phone" -> {
                 dialog.title.text = "Phone"
                 dialog.edit.hint = "enter your Phone"
                 dialog.edit.filters = arrayOf<InputFilter>(InputFilter.LengthFilter(11))
                 dialog.image.setImageResource(R.drawable.phone_number)
-                dialog.edit.setText(user.phone)
+                dialog.edit.setText(user.phone?.let {it }?:"phone")
 
             }
         }

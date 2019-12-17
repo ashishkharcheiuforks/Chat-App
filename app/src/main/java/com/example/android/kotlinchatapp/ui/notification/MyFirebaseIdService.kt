@@ -6,7 +6,7 @@ import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.messaging.FirebaseMessagingService
 
 class MyFirebaseIdService :FirebaseMessagingService() {
-    override fun onNewToken(p0: String?) {
+    override fun onNewToken(p0: String) {
         super.onNewToken(p0)
         val firebaseUser=FirebaseAuth.getInstance().currentUser
         val newToken=FirebaseInstanceId.getInstance().getToken()

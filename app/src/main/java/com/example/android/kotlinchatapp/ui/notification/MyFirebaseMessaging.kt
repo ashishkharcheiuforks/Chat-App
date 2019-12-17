@@ -13,7 +13,7 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
 class MyFirebaseMessaging:FirebaseMessagingService() {
-    override fun onMessageReceived(remoteMessage: RemoteMessage?) {
+    override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
         val sented=remoteMessage?.data?.get("sented")
         val firebaseUser=FirebaseAuth.getInstance().currentUser

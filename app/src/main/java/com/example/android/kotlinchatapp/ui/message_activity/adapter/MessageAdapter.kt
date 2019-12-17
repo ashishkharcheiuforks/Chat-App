@@ -1,6 +1,7 @@
 package com.example.android.kotlinchatapp.ui.message_activity.adapter
 
 import android.content.Context
+import android.os.Build
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,7 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 
 
 import com.bumptech.glide.Glide
@@ -18,6 +20,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.example.android.kotlinchatapp.R
 import com.example.android.kotlinchatapp.ui.message_activity.OnClickItem
+import com.example.android.kotlinchatapp.utils.FormatDate
 
 
 class MessageAdapter(private val mContext: Context, private val mChats: List<Chat>, private val userImgURL: String,private val currentUser: User) : RecyclerView.Adapter<MessageAdapter.ViewHolder>() {
@@ -25,6 +28,7 @@ class MessageAdapter(private val mContext: Context, private val mChats: List<Cha
     internal var firebaseUser: FirebaseUser? = null
     lateinit var onClickItem: OnClickItem
     lateinit var context: Context
+    val formatDate=FormatDate
     override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): ViewHolder {
         context=viewGroup.context
         if (i == MSG_TYPE_SENDER) {
@@ -38,6 +42,7 @@ class MessageAdapter(private val mContext: Context, private val mChats: List<Cha
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(viewHolder: ViewHolder, i: Int) {
         val chat = mChats[i]
         if (chat.type.equals("image")){
@@ -46,7 +51,7 @@ class MessageAdapter(private val mContext: Context, private val mChats: List<Cha
             Glide.with(mContext).load(chat.message).error(R.drawable.placeholder).into(viewHolder.show_image)
             viewHolder.show_image.setOnClickListener {
                 onClickItem.onClick(chat.message!!,viewHolder.show_image)
-                viewHolder.show_message.transitionName=context.getString(R.string.message_photo)
+                viewHolder.show_message.transitionName=chat.message
             }
 
         }
@@ -79,6 +84,7 @@ class MessageAdapter(private val mContext: Context, private val mChats: List<Cha
         else{
             viewHolder.txt_seen.visibility=GONE
         }
+        viewHolder.date.text=chat.date?.let { formatDate.getDate(it) }?:""
 
 //        viewHolder.show_image.setOnClickListener {
 //            viewHolder.show_image.setLayoutParams(
@@ -120,12 +126,14 @@ class MessageAdapter(private val mContext: Context, private val mChats: List<Cha
         var profile_image: ImageView
         var txt_seen:TextView
         var show_image:ImageView
+        var date:TextView
 
         init {
             show_message = itemView.findViewById(R.id.show_message)
             profile_image = itemView.findViewById(R.id.profile_image)
             txt_seen = itemView.findViewById(R.id.txt_seen)
             show_image=itemView.findViewById(R.id.show_image)
+            date=itemView.findViewById(R.id.messageDate)
         }
     }
 }

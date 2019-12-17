@@ -14,6 +14,7 @@ class ProfilePhotoActivity : AppCompatActivity() {
         title="Profile Image"
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         intent.getStringExtra(profilePhoto)?.let { Glide.with(this).load(it).error(R.drawable.profile_default_icon).into(imageView) }
+        intent.getStringExtra(transitionName)?.let { imageView.transitionName=it }
         if (!intent.getBooleanExtra(isProfileImage,false))
             title=""
     }

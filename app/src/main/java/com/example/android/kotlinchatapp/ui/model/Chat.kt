@@ -6,6 +6,7 @@ class Chat {
     var message: String? = null
     var isseen:Boolean?=null
     var type:String?=null
+    var date:String?=null
 
     constructor() {
 

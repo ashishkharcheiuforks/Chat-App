@@ -21,41 +21,56 @@ class UserProfileActivity : AppCompatActivity() {
     lateinit var userProfileViewModel: UserProfileViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding=DataBindingUtil.setContentView(this,R.layout.activity_user_profile)
-        binding.lifecycleOwner=this
-        userProfileViewModel=ViewModelProviders.of(this).get(UserProfileViewModel::class.java)
-        binding.vm=userProfileViewModel
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_user_profile)
+        binding.lifecycleOwner = this
+        userProfileViewModel = ViewModelProviders.of(this).get(UserProfileViewModel::class.java)
+        binding.vm = userProfileViewModel
         binding.backArrow.setOnClickListener { onBackPressed() }
-        userProfileViewModel.userId=intent.getStringExtra(userId)
+        userProfileViewModel.userId = intent.getStringExtra(userId)
         userProfileViewModel.getUserData()
         userProfileViewModel.getUserImages()
-        val images=ArrayList<Chat>()
-        val adapter=ImagesAdapter(images)
-        binding.imagesRv.adapter=adapter
+        val images = ArrayList<Chat>()
+        val adapter = ImagesAdapter(images)
+        binding.imagesRv.adapter = adapter
         userProfileViewModel.images.observe(this, Observer {
-            if (!it.isEmpty()){
-                binding.media.visibility=VISIBLE
+            if (!it.isEmpty()) {
+                binding.media.visibility = VISIBLE
                 images.clear()
                 images.addAll(it)
                 adapter.notifyDataSetChanged()
             }
         })
-        adapter.onItemClick=object:OnItemClick{
+        adapter.onItemClick = object : OnItemClick {
             override fun onClick(path: String, image: View) {
-                navigateTOShowImageActivity(path,image)
+                navigateTOShowImageActivity(path, image,path)
             }
 
         }
+        binding.userImage.setOnClickListener {
+            userProfileViewModel.user.value?.let {
+                navigateTOShowImageActivity(
+                    it.imageURL!!,
+                    binding.userImage,
+                    getString(R.string.profile_photo)
+                )
+            }
+        }
     }
-    private fun navigateTOShowImageActivity(path: String,image:View) {
-        val intent= Intent(this, ProfilePhotoActivity::class.java)
-        intent.putExtra(ProfilePhotoActivity.profilePhoto,path)
-        intent.putExtra(ProfilePhotoActivity.isProfileImage,false)
-        intent.putExtra(ProfilePhotoActivity.transitionName,path)
-        val option = ActivityOptionsCompat.makeSceneTransitionAnimation(this,image,getString(R.string.message_photo))
-        startActivity(intent,option.toBundle())
+
+    private fun navigateTOShowImageActivity(path: String, image: View,transitionName:String) {
+        val intent = Intent(this, ProfilePhotoActivity::class.java)
+        intent.putExtra(ProfilePhotoActivity.profilePhoto, path)
+        intent.putExtra(ProfilePhotoActivity.isProfileImage, false)
+        intent.putExtra(ProfilePhotoActivity.transitionName, transitionName)
+        val option = ActivityOptionsCompat.makeSceneTransitionAnimation(
+            this,
+            image,
+            getString(R.string.message_photo)
+        )
+        startActivity(intent, option.toBundle())
     }
-    companion object{
-        val userId="userId"
+
+    companion object {
+        val userId = "userId"
     }
 }
