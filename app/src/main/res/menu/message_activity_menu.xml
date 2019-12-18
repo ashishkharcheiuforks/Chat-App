@@ -5,4 +5,8 @@
     android:id="@+id/changeBackGround"
         android:title="change background"
         app:showAsAction="never"/>
+    <item
+            android:id="@+id/clearBackGround"
+            android:title="clear background"
+            app:showAsAction="never"/>
 </menu>

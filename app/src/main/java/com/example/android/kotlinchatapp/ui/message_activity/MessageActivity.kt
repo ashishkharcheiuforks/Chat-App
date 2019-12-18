@@ -58,7 +58,7 @@ class MessageActivity : AppCompatActivity() {
 
     internal var firebaseUser: FirebaseUser? = null
     lateinit var reference: DatabaseReference
-    lateinit var referenceBackground: DatabaseReference
+    var referenceBackground: DatabaseReference?=null
 
     lateinit var i: Intent
     lateinit var use: User
@@ -131,7 +131,7 @@ class MessageActivity : AppCompatActivity() {
 
 
 
-        referenceBackground = FirebaseDatabase.getInstance().getReference("Backgrounds")
+        referenceBackground = FirebaseDatabase.getInstance().getReference("Backgrounds").child(firebaseUser!!.uid)
         reference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val user = dataSnapshot.getValue(User::class.java)
@@ -154,22 +154,23 @@ class MessageActivity : AppCompatActivity() {
 
             }
         })
-        referenceBackground.addValueEventListener(object : ValueEventListener {
+        referenceBackground!!.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
                 TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
             }
 
             override fun onDataChange(p0: DataSnapshot) {
-                for (snapshot in p0.children) {
-                    var imageModel = snapshot.getValue(BackgroundImageModel::class.java)
-                    imageModel?.let {
-                        for (model in imageModel!!.list!!){
-                            if (model!!.myid.equals(currentUser.id) && model.userid.equals(userId)) {
+//                for (snapshot in p0.children) {
+                    for (s in p0.children) {
+                        var imageModel = s.getValue(BackgroundImageModel::class.java)
+                        imageModel?.let {
+                            if (imageModel.myid.equals(currentUser.id) && imageModel.userid.equals(userId)) {
 
-                                Glide.with(applicationContext).load(model.image.let { it } ?: "")
+                                Glide.with(applicationContext).load(imageModel.image.let { it } ?: "")
                                     .into(backgroundImage)
                             }
-                        }
+
+//                        }
                     }
                 }
             }
@@ -406,7 +407,7 @@ class MessageActivity : AppCompatActivity() {
         hashMap["image"] = image
 
 
-        referenceBackground.child(myId).child(userId).setValue(hashMap)
+        referenceBackground!!.child(userId).setValue(hashMap)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -487,8 +488,23 @@ class MessageActivity : AppCompatActivity() {
 
                 return true
             }
+            R.id.clearBackGround->{
+                clearBackground()
+                return true
+            }
         }
         return false
+
+    }
+
+    private fun clearBackground() {
+        referenceBackground!!.child(userId).removeValue().addOnCompleteListener {
+            backgroundImage.setImageBitmap(null)
+            Toasty.success(this,"deleted",Toast.LENGTH_SHORT).show()
+        }.addOnFailureListener {
+            Toasty.error(this,"error occurred",Toast.LENGTH_SHORT).show()
+
+        }
 
     }
 }
