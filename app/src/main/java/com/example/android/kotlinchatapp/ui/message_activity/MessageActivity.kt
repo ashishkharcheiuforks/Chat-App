@@ -3,7 +3,6 @@ package com.example.android.kotlinchatapp.ui.message_activity
 import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Intent
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -12,18 +11,14 @@ import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.SimpleTarget
-import com.bumptech.glide.request.transition.Transition
 import com.example.android.kotlinchatapp.ui.model.Chat
 import com.example.android.kotlinchatapp.ui.model.User
 import com.example.android.kotlinchatapp.R
-import com.example.android.kotlinchatapp.ui.activities.LoginActivity
 import com.example.android.kotlinchatapp.ui.fragments.APIService
 import com.example.android.kotlinchatapp.ui.notification.*
 import com.example.android.kotlinchatapp.ui.message_activity.adapter.MessageAdapter

@@ -14,6 +14,7 @@ import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.example.android.kotlinchatapp.ui.model.User
 import com.example.android.kotlinchatapp.R
+import com.example.android.kotlinchatapp.ui.login.LoginActivity
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
@@ -172,9 +173,10 @@ class MainActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.logout -> {
                 FirebaseAuth.getInstance().signOut()
-                startActivity(Intent(this, LoginActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
-
-                return true
+                val i = Intent(this, LoginActivity::class.java)
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(i)
             }
         }
         return false

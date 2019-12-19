@@ -34,8 +34,8 @@ class ProfileViewModel : ViewModel() {
         if (value.isNotEmpty()) {
             when (key) {
                 "userName" -> {
-                    if (value.length < 3)
-                        profileNavigator.editError("name should be more than 3 characters")
+                    if (value.length < 5)
+                        profileNavigator.editError("name should be more than 5 characters")
                     else
                         editProfile(key, value)
                 }

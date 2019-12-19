@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import com.example.android.kotlinchatapp.R
+import com.example.android.kotlinchatapp.ui.login.LoginActivity
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_reset_password.*

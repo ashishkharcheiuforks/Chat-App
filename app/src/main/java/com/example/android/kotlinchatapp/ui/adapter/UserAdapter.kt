@@ -31,7 +31,7 @@ class UserAdapter(
 ) : RecyclerView.Adapter<UserAdapter.ViewHolder>() {
     val firebaseUser = FirebaseAuth.getInstance().currentUser
     val refrence = FirebaseDatabase.getInstance().getReference("Chats")
-    val myId = firebaseUser!!.uid
+    val myId = firebaseUser?.let { it.uid}?:""
     lateinit var con: Context
     override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): ViewHolder {
         con = viewGroup.context

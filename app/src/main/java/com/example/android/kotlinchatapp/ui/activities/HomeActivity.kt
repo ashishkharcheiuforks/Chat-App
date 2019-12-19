@@ -18,6 +18,7 @@ import com.example.android.kotlinchatapp.R
 import com.example.android.kotlinchatapp.ui.chats.ChatsFragment
 import com.example.android.kotlinchatapp.ui.profile.ProfileFragment
 import com.example.android.kotlinchatapp.ui.fragments.UsersFragment
+import com.example.android.kotlinchatapp.ui.login.LoginActivity
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -90,9 +91,9 @@ class HomeActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.logout -> {
                 FirebaseAuth.getInstance().signOut()
-                startActivity(Intent(this@HomeActivity, LoginActivity::class.java)
-                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-
+                val i = Intent(this, LoginActivity::class.java)
+                startActivity(i)
+                finish()
                 return true
             }
         }

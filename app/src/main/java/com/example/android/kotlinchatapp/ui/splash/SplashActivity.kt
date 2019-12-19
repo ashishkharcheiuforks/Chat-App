@@ -1,0 +1,44 @@
+package com.example.android.kotlinchatapp.ui.splash
+
+import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.view.animation.AnimationUtils
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import com.example.android.kotlinchatapp.R
+import com.example.android.kotlinchatapp.databinding.ActivitySplashBinding
+import com.example.android.kotlinchatapp.ui.activities.HomeActivity
+import com.example.android.kotlinchatapp.ui.login.LoginActivity
+
+class SplashActivity : AppCompatActivity() {
+    lateinit var binding:ActivitySplashBinding
+    lateinit var splashViewModel: SplashViewModel
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding=DataBindingUtil.setContentView(this,R.layout.activity_splash)
+        binding.lifecycleOwner=this
+        splashViewModel=ViewModelProviders.of(this).get(SplashViewModel::class.java)
+        binding.vm=splashViewModel
+
+        var fromTop=AnimationUtils.loadAnimation(this,R.anim.fromtop)
+        binding.splashMainIcon.animation=fromTop
+        val fromRight=AnimationUtils.loadAnimation(this,R.anim.fromright)
+        binding.splashIconSender.animation=fromRight
+        val fromleft=AnimationUtils.loadAnimation(this,R.anim.fromleft)
+        binding.splashIconReceiver.animation=fromleft
+        splashViewModel.checkLoging()
+        splashViewModel.startHandler()
+        splashViewModel.navigate.observe(this, Observer {
+            if (splashViewModel.logedin){
+                startActivity(Intent(this,HomeActivity::class.java))
+            }
+            else{
+                startActivity(Intent(this,
+                    LoginActivity::class.java))
+
+            }
+        })
+    }
+}

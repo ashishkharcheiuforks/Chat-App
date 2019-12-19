@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -152,7 +153,8 @@ class ChatsFragment : Fragment() {
 //                        }
 //                    }
 //                }
-
+                if (mUsers!!.isNotEmpty())
+                    v.container.visibility=GONE
                 userAdapter = UserAdapter(context, mUsers!!,true)
                 v.recycle_View?.setAdapter(userAdapter)
             }

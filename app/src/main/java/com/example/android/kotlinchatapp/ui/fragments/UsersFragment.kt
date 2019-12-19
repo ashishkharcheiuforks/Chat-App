@@ -115,10 +115,8 @@ class UsersFragment : Fragment() {
 
         val firebaseUser = FirebaseAuth.getInstance().currentUser
         val databaseReference = FirebaseDatabase.getInstance().getReference("Users")
-        Log.e("idd",databaseReference.toString())
         databaseReference.addValueEventListener(object :ValueEventListener{
             override fun onCancelled(p0: DatabaseError) {
-                Log.e("error",p0.message)
                 Toast.makeText(context!!,p0.message,Toast.LENGTH_LONG).show()
             }
 
@@ -131,7 +129,6 @@ class UsersFragment : Fragment() {
                     assert(firebaseUser != null)
                     if (user.id != firebaseUser!!.uid) {
                         mUsers.add(user)
-                        Log.e("userrrrr", user.userName)
                     }
                 }
 
