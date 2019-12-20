@@ -59,7 +59,7 @@ class ProfileFragment : Fragment(), ProfileNavigator {
     private var storageReference: StorageReference? = null
     lateinit var firebaseUser: FirebaseUser
     lateinit var reference: DatabaseReference
-     var user: User?= User()
+    var user: User? = User()
     lateinit var progressDialog: ProgressDialog
     lateinit var profile: CircleImageView
     lateinit var dialog: Dialog
@@ -96,7 +96,10 @@ class ProfileFragment : Fragment(), ProfileNavigator {
         v.profile_image.setOnClickListener {
             if (user!!.imageURL != "default") {
                 val intent = Intent(context, ProfilePhotoActivity::class.java)
-                intent.putExtra(ProfilePhotoActivity.profilePhoto, user!!.imageURL?.let { it }?:"")
+                intent.putExtra(
+                    ProfilePhotoActivity.profilePhoto,
+                    user!!.imageURL?.let { it } ?: ""
+                )
                 intent.putExtra(ProfilePhotoActivity.isProfileImage, true)
                 intent.putExtra(ProfilePhotoActivity.transitionName, R.string.profile_photo)
                 val option = ActivityOptionsCompat.makeSceneTransitionAnimation(
@@ -129,14 +132,19 @@ class ProfileFragment : Fragment(), ProfileNavigator {
 
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 user = dataSnapshot.getValue(User::class.java)!!
-                v.user_name.text = user!!.userName
-                v.bio.text = user!!.bio.let { it } ?: kotlin.run { "" }
-                v.phone.text = user!!.phone.let { it } ?: kotlin.run { "" }
+                user?.let {
+                    v.user_name.text = user!!.userName
+                    v.bio.text = user!!.bio.let { it } ?: kotlin.run { "" }
+                    v.phone.text = user!!.phone.let { it } ?: kotlin.run { "" }
 //                if (user.imageURL == "default")
 //                    v.profile_image.setImageResource(R.mipmap.ic_launcher_round)
 //                else {
-                    Glide.with(context!!).load(user!!.imageURL?:"").error(R.drawable.profile_default_icon).into(v.profile_image)
+                    profile_image?.let {
+                        Glide.with(context!!).load(user!!.imageURL ?: "")
+                            .error(R.drawable.profile_default_icon).into(it)
+                    }
 //                }
+                }
             }
 
         })
@@ -151,21 +159,21 @@ class ProfileFragment : Fragment(), ProfileNavigator {
             "userName" -> {
                 dialog.edit.hint = "enter your name"
                 dialog.edit.filters = arrayOf<InputFilter>(InputFilter.LengthFilter(15))
-                dialog.edit.setText(user!!.userName?.let {it }?: kotlin.run { "name" })
+                dialog.edit.setText(user!!.userName?.let { it } ?: kotlin.run { "name" })
             }
             "bio" -> {
                 dialog.title.text = "Bio"
                 dialog.edit.hint = "enter your Bio"
                 dialog.edit.filters = arrayOf<InputFilter>(InputFilter.LengthFilter(25))
                 dialog.image.setImageResource(R.drawable.bio_icon)
-                dialog.edit.setText(user!!.bio?.let {it }?:"bio")
+                dialog.edit.setText(user!!.bio?.let { it } ?: "bio")
             }
             "phone" -> {
                 dialog.title.text = "Phone"
                 dialog.edit.hint = "enter your Phone"
                 dialog.edit.filters = arrayOf<InputFilter>(InputFilter.LengthFilter(11))
                 dialog.image.setImageResource(R.drawable.phone_number)
-                dialog.edit.setText(user!!.phone?.let {it }?:"phone")
+                dialog.edit.setText(user!!.phone?.let { it } ?: "phone")
 
             }
         }
