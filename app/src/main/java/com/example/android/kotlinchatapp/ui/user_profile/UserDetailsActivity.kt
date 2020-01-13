@@ -1,40 +1,45 @@
 package com.example.android.kotlinchatapp.ui.user_profile
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.view.View.VISIBLE
+import com.google.android.material.snackbar.Snackbar
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.example.android.kotlinchatapp.R
-import com.example.android.kotlinchatapp.databinding.ActivityUserProfileBinding
+import com.example.android.kotlinchatapp.databinding.ActivityUserDetailsBinding
 import com.example.android.kotlinchatapp.ui.model.Chat
 import com.example.android.kotlinchatapp.ui.profile_photo.ProfilePhotoActivity
 import com.example.android.kotlinchatapp.ui.user_profile.adapter.ImagesAdapter
-import com.example.android.kotlinchatapp.utils.BindingUtils
+import kotlinx.android.synthetic.main.activity_user_details.*
 
-class UserProfileActivity : AppCompatActivity() {
-    lateinit var binding: ActivityUserProfileBinding
+class UserDetailsActivity : AppCompatActivity() {
+    lateinit var binding: ActivityUserDetailsBinding
     lateinit var userProfileViewModel: UserProfileViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_user_profile)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_user_details)
         binding.lifecycleOwner = this
         userProfileViewModel = ViewModelProviders.of(this).get(UserProfileViewModel::class.java)
+        toolbar!!.title=""
         binding.vm = userProfileViewModel
-        binding.backArrow.setOnClickListener { onBackPressed() }
-        userProfileViewModel.userId = intent.getStringExtra(userId)
+
+        setSupportActionBar(toolbar)
+        toolbar.setNavigationIcon(R.drawable.back_arrow)
+        toolbar.setNavigationOnClickListener { onBackPressed() }
+
+        userProfileViewModel.userId = intent.getStringExtra(userId)!!
         userProfileViewModel.getUserData()
         userProfileViewModel.getUserImages()
         val images = ArrayList<Chat>()
         val adapter = ImagesAdapter(images)
         binding.imagesRv.adapter = adapter
         userProfileViewModel.images.observe(this, Observer {
-            if (!it.isEmpty()) {
-                binding.media.visibility = VISIBLE
+            if (it.isNotEmpty()) {
+                binding.media.visibility = View.VISIBLE
                 images.clear()
                 images.addAll(it)
                 adapter.notifyDataSetChanged()
@@ -56,7 +61,6 @@ class UserProfileActivity : AppCompatActivity() {
             }
         }
     }
-
     private fun navigateTOShowImageActivity(path: String, image: View,transitionName:String) {
         val intent = Intent(this, ProfilePhotoActivity::class.java)
         intent.putExtra(ProfilePhotoActivity.profilePhoto, path)
@@ -72,5 +76,9 @@ class UserProfileActivity : AppCompatActivity() {
 
     companion object {
         val userId = "userId"
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
     }
 }

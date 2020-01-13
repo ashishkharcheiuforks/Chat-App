@@ -1,5 +1,6 @@
 package com.example.android.kotlinchatapp.ui.message_activity
 
+import retrofit2.*
 import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Intent
@@ -24,7 +25,7 @@ import com.example.android.kotlinchatapp.ui.notification.*
 import com.example.android.kotlinchatapp.ui.message_activity.adapter.MessageAdapter
 import com.example.android.kotlinchatapp.ui.message_activity.model.BackgroundImageModel
 import com.example.android.kotlinchatapp.ui.profile_photo.ProfilePhotoActivity
-import com.example.android.kotlinchatapp.ui.user_profile.UserProfileActivity
+import com.example.android.kotlinchatapp.ui.user_profile.UserDetailsActivity
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
@@ -176,8 +177,8 @@ class MessageActivity : AppCompatActivity() {
     }
 
     private fun navigateToUserProfile() {
-        val i = Intent(this, UserProfileActivity::class.java)
-        i.putExtra(UserProfileActivity.userId, userId)
+        val i = Intent(this, UserDetailsActivity::class.java)
+        i.putExtra(UserDetailsActivity.userId, userId)
         val p1: androidx.core.util.Pair<View, String> =
             androidx.core.util.Pair(profile_image, getString(R.string.profile_photo))
         val p2: androidx.core.util.Pair<View, String> =
@@ -223,54 +224,53 @@ class MessageActivity : AppCompatActivity() {
 
         reference.child("Chats").push().setValue(hashMap)
         val userReference = FirebaseDatabase.getInstance().getReference("Users").child(userId)
-//        reference.addValueEventListener(object:ValueEventListener{
-//            override fun onCancelled(p0: DatabaseError) {
-//                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-//            }
-//
-//            override fun onDataChange(dataSnapshot: DataSnapshot) {
-//                val u=dataSnapshot.getValue(User::class.java)
-//
-//                if (notify) {
-//                    sendNotification(reciever, currentUser?.userName, text_send.text.toString())
-//                }
-//                notify=false
-//            }
-//
-//        })
+        userReference.addValueEventListener(object:ValueEventListener{
+            override fun onCancelled(p0: DatabaseError) {
+            }
+
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val u=dataSnapshot.getValue(User::class.java)
+
+                if (notify) {
+                    sendNotification(reciever, u?.userName, message)
+                }
+                notify=false
+            }
+
+        })
     }
 
-//    private fun sendNotification(reciever: String, userName: String?, toString: String) {
-//        val tokens=FirebaseDatabase.getInstance().getReference("Tokens")
-//        val query=tokens.orderByKey().equalTo(reciever)
-//        query.addValueEventListener(object :ValueEventListener{
-//            override fun onCancelled(p0: DatabaseError) {
-//                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-//            }
-//
-//            override fun onDataChange(dataSnapshot: DataSnapshot) {
-//                val token=dataSnapshot.getValue(Token::class.java)
-//                val data= Data(firebaseUser?.uid!!,R.mipmap.ic_launcher,userName!!+": "+text_send.text.toString(),"New Message",userId)
-//                val sender= Sender(data,token?.token!!)
-//                apiService.sendNotification(sender)
-//                    .enqueue(object:Callback<MyResponse>{
-//                        override fun onFailure(call: Call<MyResponse>, t: Throwable) {
-//                            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-//                        }
-//
-//                        override fun onResponse(call: Call<MyResponse>, response: Response<MyResponse>) {
-//                            if(response.code()==200){
-//                                if (response.body()?.success!=1)
-//                                    Toast.makeText(applicationContext,"Failed",Toast.LENGTH_LONG).show()
-//
-//                            }
-//                        }
-//
-//                    })
-//            }
-//
-//        })
-//    }
+    private fun sendNotification(reciever: String, userName: String?, message: String) {
+        val tokens=FirebaseDatabase.getInstance().getReference("Tokens")
+        val query=tokens.orderByKey().equalTo(reciever)
+        query.addValueEventListener(object :ValueEventListener{
+            override fun onCancelled(p0: DatabaseError) {
+            }
+
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                for (snapshot in dataSnapshot.children){
+                    val token=snapshot.getValue(Token::class.java)
+                    val data= Data(firebaseUser?.uid!!,R.mipmap.ic_launcher,userName!!+": "+message,"New Message",userId)
+                    val sender= Sender(data,token?.token!!)
+                    apiService.sendNotification(sender)
+                        .enqueue(object:Callback<MyResponse>{
+                            override fun onFailure(call: Call<MyResponse>, t: Throwable) {
+                            }
+
+                            override fun onResponse(call: Call<MyResponse>, response: Response<MyResponse>) {
+                                if(response.code()==200){
+                                    if (response.body()?.success!=1)
+                                        Toast.makeText(applicationContext,"Failed",Toast.LENGTH_LONG).show()
+
+                                }
+                            }
+
+                        })
+                }
+            }
+
+        })
+    }
 
     private fun readMessage(myid: String, userid: String, userImgURL: String) {
         mChats = ArrayList()

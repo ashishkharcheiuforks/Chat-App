@@ -21,7 +21,7 @@ class ResetPasswordActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         firebaseAuth=FirebaseAuth.getInstance()
         reset_btn.setOnClickListener(View.OnClickListener {
-            val email =email_txt.text.toString()
+            val email =email_txt.text.toString().trim()
             if (email.isEmpty()){
                 Toast.makeText(this,"all fileds are required",Toast.LENGTH_LONG).show()
             }

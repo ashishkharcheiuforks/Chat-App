@@ -9,7 +9,12 @@
             android:roundIcon="@drawable/logo"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
-        <activity android:name=".ui.splash.SplashActivity"
+        <activity
+                android:name=".ui.user_profile.UserDetailsActivity"
+                android:label="@string/title_activity_user_details"
+                android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+                android:name=".ui.splash.SplashActivity"
                 android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -17,7 +22,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.user_profile.UserProfileActivity" />
+
         <activity
                 android:name=".ui.profile_photo.ProfilePhotoActivity"
                 android:theme="@style/ProfilePhotoTheme" />
@@ -34,14 +39,12 @@
         <activity
                 android:name=".ui.activities.HomeActivity"
                 android:label="@string/title_activity_home"
-                android:theme="@style/AppTheme.NoActionBar">
-
-        </activity> <!-- <service -->
+                android:theme="@style/AppTheme.NoActionBar"></activity> <!-- <service -->
         <!-- android:name=".MyService" -->
         <!-- android:enabled="true" -->
         <!-- android:exported="true"> -->
         <!-- </service> -->
-        <activity android:name=".ui.login.LoginActivity"></activity>
+        <activity android:name=".ui.login.LoginActivity" />
         <activity
                 android:name=".ui.registeration.RegisterActivity"
                 android:parentActivityName=".ui.login.LoginActivity" />

@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.android.kotlinchatapp.ui.model.Chat
@@ -41,14 +42,14 @@ class ChatsFragment : Fragment() {
 
     private var userslist: ArrayList<String>? =null
     lateinit var test :List<String>
-
+    lateinit var chatsViewModel: ChatsViewModel
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
         val v=  inflater.inflate(R.layout.fragment_chats, container, false)
-
+        chatsViewModel= ChatsViewModel()
         v.recycle_View?.layoutManager=LinearLayoutManager(context)!!
         mUsers = ArrayList()
         userslist = ArrayList()
@@ -79,6 +80,10 @@ class ChatsFragment : Fragment() {
             override fun onCancelled(databaseError: DatabaseError) {
 
             }
+        })
+        chatsViewModel.updateToken()
+        chatsViewModel.token.observe(this, Observer {
+            updateToken(it)
         })
         //updateToken(FirebaseInstanceId.getInstance().getToken()!!)
         return v

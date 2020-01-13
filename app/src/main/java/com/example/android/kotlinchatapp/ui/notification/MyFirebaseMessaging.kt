@@ -28,7 +28,8 @@ class MyFirebaseMessaging:FirebaseMessagingService() {
         val title=remoteMessage?.data?.get("title")
         val body=remoteMessage?.data?.get("body")
         val notification = remoteMessage?.notification
-        val j=(user?.replace("[\\D]",""))?.toInt()
+        val s=user?.replace("[\\D]","")
+        val j=-1
         val intent = Intent(this, MessageActivity::class.java)
         val bundle=Bundle()
         bundle.putString("userid",user)
@@ -50,7 +51,7 @@ class MyFirebaseMessaging:FirebaseMessagingService() {
         if (j>0)
             i=j
 
-        noti.notify(i,builder.build())
+        noti.notify(1,builder.build())
 
 
     }

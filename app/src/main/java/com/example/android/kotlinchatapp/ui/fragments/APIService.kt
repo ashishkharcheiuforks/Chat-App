@@ -14,7 +14,7 @@ interface APIService {
             "Authorization:key=AAAAcQgVSkU:APA91bHjCk9pGzOy4fvk0kemHArWJU6FBrijlXdiK8mdPKt1q1hSoNdipe_UNoWzX1TCh_X6UsHdK9Zire3pcIjX-7SrNGv_6yFH9koW_OfVAxpNhXmBdWNtEfrjJ_bmjKc3JCMKrLAH"
 
     )
-    @POST("fcm/send ")
+    @POST("fcm/send")
     fun sendNotification(@Body body: Sender): Call<MyResponse>
 
 

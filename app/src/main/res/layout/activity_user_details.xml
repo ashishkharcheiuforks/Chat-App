@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+                name="vm"
+                type="com.example.android.kotlinchatapp.ui.user_profile.UserProfileViewModel"
+                />
+    </data>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        tools:context=".ui.user_profile.UserDetailsActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/app_bar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_200sdp"
+            android:fitsSystemWindows="true"
+            android:theme="@style/AppTheme.AppBarOverlay">
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+                android:id="@+id/toolbar_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fitsSystemWindows="true"
+                app:contentScrim="?attr/colorPrimary"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed"
+                app:toolbarId="@+id/toolbar">
+            <ImageView
+                    android:id="@+id/userImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@color/warningColor"
+                    android:background="@color/cardview_dark_background"
+                    app:profileImage="@{vm.user.imageURL}"
+                    android:scaleType="centerCrop"
+                    android:transitionName="@string/profile_photo"
+                    app:layout_collapseMode="parallax"
+                    app:layout_collapseParallaxMultiplier="0.7"/>
+            <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    app:layout_collapseMode="pin"
+                    app:popupTheme="@style/AppTheme.PopupOverlay"
+                    app:title="@{vm.user.userName}"
+                    />
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            tools:context=".ui.user_profile.UserDetailsActivity"
+            tools:showIn="@layout/activity_user_details">
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                >
+
+
+
+
+
+            <RelativeLayout
+                    android:id="@+id/bio_container"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    app:layout_constraintEnd_toEndOf="@id/end_guideline"
+                    app:layout_constraintStart_toStartOf="@id/start_guideline21"
+                    app:layout_constraintTop_toTopOf="@id/top_guideline21">
+
+                <ImageView
+                        android:id="@+id/bio_icon"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/bio_icon" />
+
+                <TextView
+                        android:id="@+id/bio_txt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="7dp"
+                        android:layout_toEndOf="@id/bio_icon"
+                        android:text="Bio"
+                        android:textColor="#000000"
+                        android:textStyle="bold" />
+
+                <TextView
+                        android:id="@+id/bio"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/bio_txt"
+                        android:layout_marginStart="7dp"
+                        android:layout_toEndOf="@id/bio_icon"
+                        tools:text="george hany"
+                        android:text="@{vm.user.bio}"/>
+            </RelativeLayout>
+            <RelativeLayout
+                    android:id="@+id/phone_container"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    app:layout_constraintEnd_toEndOf="@id/end_guideline"
+                    app:layout_constraintStart_toStartOf="@id/start_guideline21"
+                    app:layout_constraintTop_toBottomOf="@id/bio_container">
+
+                <ImageView
+                        android:id="@+id/phone_icon"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/phone_number" />
+
+                <TextView
+                        android:id="@+id/phone_txt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="7dp"
+                        android:layout_toEndOf="@id/phone_icon"
+                        android:text="Phone"
+                        android:textColor="#000000"
+                        android:textStyle="bold" />
+
+                <TextView
+                        android:id="@+id/phone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/phone_txt"
+                        android:layout_marginStart="7dp"
+                        android:layout_toEndOf="@id/phone_icon"
+                        tools:text="george hany"
+                        android:text="@{vm.user.phone}"/>
+            </RelativeLayout>
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/phone_container"
+                    app:layout_constraintStart_toStartOf="@id/start_guideline21"
+                    android:text="Media"
+                    android:visibility="invisible"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:textStyle="bold"
+                    android:textColor="#000000"
+                    android:id="@+id/media"
+                    />
+            <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/images_rv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layout_constraintStart_toStartOf="@id/start_guideline21"
+                    app:layout_constraintEnd_toEndOf="@id/end_guideline"
+                    app:layout_constraintTop_toBottomOf="@id/media"
+                    app:layout_constraintBottom_toBottomOf="@id/bottom_guideline20"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    tools:listitem="@layout/item_user_images"
+                    app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
+                    app:spanCount="3"
+                    />
+
+            <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/end_guideline"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_end="20dp" />
+
+            <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/start_guideline21"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_begin="20dp" />
+
+            <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/bottom_guideline20"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintGuide_end="20dp" />
+
+            <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/top_guideline21"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintGuide_begin="20dp" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>
