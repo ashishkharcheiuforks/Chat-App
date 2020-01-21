@@ -116,7 +116,7 @@ class UserAdapter(
                     if (lastMessage!!.type.equals("image")) {
                         last_msg.text = "Image"
                         last_msg.setCompoundDrawablesWithIntrinsicBounds(
-                            R.drawable.ic_black_camera,
+                            if(!lastMessage!!.isseen!!&& lastMessage!!.reciever==myId)R.drawable.ic_camera_un_read_24dp else R.drawable.ic_black_camera,
                             0,
                             0,
                             0
@@ -124,6 +124,10 @@ class UserAdapter(
                     } else {
                         last_msg.text = it.message
                         last_msg.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
+                    }
+
+                    if (!lastMessage!!.isseen!!&& lastMessage!!.reciever==myId){
+                        last_msg.setTextColor(con.getColor(R.color.un_read_message))
                     }
                 }
             }

@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.ContactsContract.CommonDataKinds.Website.URL
 import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
@@ -16,6 +17,10 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.android.volley.Request
+import com.android.volley.RequestQueue
+import com.android.volley.VolleyError
+import com.android.volley.toolbox.JsonObjectRequest
 import com.bumptech.glide.Glide
 import com.example.android.kotlinchatapp.ui.model.Chat
 import com.example.android.kotlinchatapp.ui.model.User
@@ -24,6 +29,7 @@ import com.example.android.kotlinchatapp.ui.fragments.APIService
 import com.example.android.kotlinchatapp.ui.notification.*
 import com.example.android.kotlinchatapp.ui.message_activity.adapter.MessageAdapter
 import com.example.android.kotlinchatapp.ui.message_activity.model.BackgroundImageModel
+import com.example.android.kotlinchatapp.ui.notify.MySingleton
 import com.example.android.kotlinchatapp.ui.profile_photo.ProfilePhotoActivity
 import com.example.android.kotlinchatapp.ui.user_profile.UserDetailsActivity
 import com.google.android.gms.tasks.Continuation
@@ -39,10 +45,13 @@ import kotlinx.android.synthetic.main.activity_message.*
 import kotlinx.android.synthetic.main.activity_message.profile_image
 import kotlinx.android.synthetic.main.activity_message.toolbar
 import kotlinx.android.synthetic.main.activity_message.username
+import org.json.JSONException
+import org.json.JSONObject
 import java.io.IOException
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
+import com.android.volley.toolbox.Volley
 
 class MessageActivity : AppCompatActivity() {
     private val PICK_IMAGE_REQUEST = 71
@@ -51,14 +60,14 @@ class MessageActivity : AppCompatActivity() {
     lateinit var progressDialog: ProgressDialog
     private var filePath: Uri? = null
 
-
+    lateinit var requestQueue: RequestQueue
     internal var firebaseUser: FirebaseUser? = null
     lateinit var reference: DatabaseReference
-    var referenceBackground: DatabaseReference?=null
+    var referenceBackground: DatabaseReference? = null
 
     lateinit var i: Intent
     lateinit var use: User
-
+    var user: User? = null
 
     lateinit var messageAdapter: MessageAdapter
     lateinit var mChats: MutableList<Chat>
@@ -81,7 +90,7 @@ class MessageActivity : AppCompatActivity() {
         storageReference = FirebaseStorage.getInstance().reference
         profile_image.setOnClickListener { navigateToUserProfile() }
         data_container.setOnClickListener { navigateToUserProfile() }
-
+        requestQueue = Volley.newRequestQueue(this)
         apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService::class.java)
         toolbar.setNavigationOnClickListener { finish() }
         i = getIntent()
@@ -127,23 +136,24 @@ class MessageActivity : AppCompatActivity() {
 
 
 
-        referenceBackground = FirebaseDatabase.getInstance().getReference("Backgrounds").child(firebaseUser!!.uid)
+        referenceBackground =
+            FirebaseDatabase.getInstance().getReference("Backgrounds").child(firebaseUser!!.uid)
         reference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val user = dataSnapshot.getValue(User::class.java)
+                user = dataSnapshot.getValue(User::class.java)
                 username.text = user!!.userName
-                if (user.status.equals("online"))
-                    userStatus.text = user.status
+                if (user!!.status.equals("online"))
+                    userStatus.text = user!!.status
                 else
-                    userStatus.text = user.lastSeen?.let { it } ?: kotlin.run { "" }
+                    userStatus.text = user!!.lastSeen?.let { it } ?: kotlin.run { "" }
 
 //                if (user.imageURL == "default")
 //                    profile_image.setImageResource(R.mipmap.ic_launcher_round)
 //                else
-                Glide.with(applicationContext).load(user.imageURL)
+                Glide.with(applicationContext).load(user!!.imageURL)
                     .error(R.drawable.profile_default_icon).into(profile_image)
 
-                readMessage(firebaseUser!!.uid, userId, user.imageURL!!)
+                readMessage(firebaseUser!!.uid, userId, user!!.imageURL!!)
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
@@ -157,14 +167,17 @@ class MessageActivity : AppCompatActivity() {
 
             override fun onDataChange(p0: DataSnapshot) {
 //                for (snapshot in p0.children) {
-                    for (s in p0.children) {
-                        var imageModel = s.getValue(BackgroundImageModel::class.java)
-                        imageModel?.let {
-                            if (imageModel.myid.equals(currentUser.id) && imageModel.userid.equals(userId)) {
+                for (s in p0.children) {
+                    var imageModel = s.getValue(BackgroundImageModel::class.java)
+                    imageModel?.let {
+                        if (imageModel.myid.equals(currentUser.id) && imageModel.userid.equals(
+                                userId
+                            )
+                        ) {
 
-                                Glide.with(applicationContext).load(imageModel.image.let { it } ?: "")
-                                    .into(backgroundImage)
-                            }
+                            Glide.with(applicationContext).load(imageModel.image.let { it } ?: "")
+                                .into(backgroundImage)
+                        }
 
 //                        }
                     }
@@ -224,43 +237,56 @@ class MessageActivity : AppCompatActivity() {
 
         reference.child("Chats").push().setValue(hashMap)
         val userReference = FirebaseDatabase.getInstance().getReference("Users").child(userId)
-        userReference.addValueEventListener(object:ValueEventListener{
+        userReference.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
             }
 
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val u=dataSnapshot.getValue(User::class.java)
+                val u = dataSnapshot.getValue(User::class.java)
 
                 if (notify) {
-                    sendNotification(reciever, u?.userName, message)
+                    sendNotification(reciever, currentUser.userName, message)
                 }
-                notify=false
+                notify = false
             }
 
         })
     }
 
     private fun sendNotification(reciever: String, userName: String?, message: String) {
-        val tokens=FirebaseDatabase.getInstance().getReference("Tokens")
-        val query=tokens.orderByKey().equalTo(reciever)
-        query.addValueEventListener(object :ValueEventListener{
+        val tokens = FirebaseDatabase.getInstance().getReference("Tokens")
+        val query = tokens.orderByKey().equalTo(reciever)
+        query.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
             }
 
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                for (snapshot in dataSnapshot.children){
-                    val token=snapshot.getValue(Token::class.java)
-                    val data= Data(firebaseUser?.uid!!,R.mipmap.ic_launcher,userName!!+": "+message,"New Message",userId)
-                    val sender= Sender(data,token?.token!!)
+                for (snapshot in dataSnapshot.children) {
+                    val token = snapshot.getValue(Token::class.java)
+                    val data = Data(
+                        firebaseUser?.uid!!,
+                        R.mipmap.ic_launcher,
+                        userName!! + ": " + message,
+                        "New Message",
+                        userId
+                    )
+                    val sender = Sender(data, token?.token!!)
                     apiService.sendNotification(sender)
-                        .enqueue(object:Callback<MyResponse>{
+                        .enqueue(object : Callback<MyResponse> {
                             override fun onFailure(call: Call<MyResponse>, t: Throwable) {
                             }
 
-                            override fun onResponse(call: Call<MyResponse>, response: Response<MyResponse>) {
-                                if(response.code()==200){
-                                    if (response.body()?.success!=1)
-                                        Toast.makeText(applicationContext,"Failed",Toast.LENGTH_LONG).show()
+                            override fun onResponse(
+                                call: Call<MyResponse>,
+                                response: Response<MyResponse>
+                            ) {
+                                if (response.code() == 200) {
+                                    if (response.body()?.success != 1)
+                                        Toast.makeText(
+                                            applicationContext,
+                                            "Failed",
+                                            Toast.LENGTH_LONG
+                                        ).show()
 
                                 }
                             }
@@ -271,6 +297,7 @@ class MessageActivity : AppCompatActivity() {
 
         })
     }
+
 
     private fun readMessage(myid: String, userid: String, userImgURL: String) {
         mChats = ArrayList()
@@ -428,6 +455,8 @@ class MessageActivity : AppCompatActivity() {
                         val downloadUri = it.result
                         progressDialog.hide()
                         sendMessage(firebaseUser!!.uid, userId, downloadUri.toString(), "image")
+                        notify = true
+                        sendNotification(userId, currentUser.userName, "Image")
 
                     } else {
                         Toasty.error(applicationContext, "failed to upload", Toasty.LENGTH_LONG)
@@ -483,7 +512,7 @@ class MessageActivity : AppCompatActivity() {
 
                 return true
             }
-            R.id.clearBackGround->{
+            R.id.clearBackGround -> {
                 clearBackground()
                 return true
             }
@@ -495,9 +524,9 @@ class MessageActivity : AppCompatActivity() {
     private fun clearBackground() {
         referenceBackground!!.child(userId).removeValue().addOnCompleteListener {
             backgroundImage.setImageBitmap(null)
-            Toasty.success(this,"deleted",Toast.LENGTH_SHORT).show()
+            Toasty.success(this, "deleted", Toast.LENGTH_SHORT).show()
         }.addOnFailureListener {
-            Toasty.error(this,"error occurred",Toast.LENGTH_SHORT).show()
+            Toasty.error(this, "error occurred", Toast.LENGTH_SHORT).show()
 
         }
 
