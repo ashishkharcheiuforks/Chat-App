@@ -116,24 +116,24 @@ class HomeActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onStart() {
         super.onStart()
-        setStatus("online")
+//        setStatus("online")
     }
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onResume() {
         super.onResume()
-        setStatus("online")
+//        setStatus("online")
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onPause() {
         super.onPause()
-        setStatus("offline")
+//        setStatus("offline")
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onStop() {
         super.onStop()
-        setStatus("offline")
+//        setStatus("offline")
 
     }
 

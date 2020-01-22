@@ -138,6 +138,23 @@ class MessageActivity : AppCompatActivity() {
 
         referenceBackground =
             FirebaseDatabase.getInstance().getReference("Backgrounds").child(firebaseUser!!.uid)
+
+        val userImageReference=FirebaseDatabase.getInstance().getReference("Users")
+            .child(userId).child("imageURL")
+        userImageReference.addValueEventListener(object :ValueEventListener{
+            override fun onCancelled(p0: DatabaseError) {
+
+            }
+
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val userImage=dataSnapshot.getValue(String::class.java)
+                Glide.with(applicationContext).load(userImage)
+                    .error(R.drawable.profile_default_icon).into(profile_image)
+
+                readMessage(firebaseUser!!.uid, userId, userImage!!)
+            }
+
+        })
         reference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 user = dataSnapshot.getValue(User::class.java)
@@ -150,10 +167,10 @@ class MessageActivity : AppCompatActivity() {
 //                if (user.imageURL == "default")
 //                    profile_image.setImageResource(R.mipmap.ic_launcher_round)
 //                else
-                Glide.with(applicationContext).load(user!!.imageURL)
-                    .error(R.drawable.profile_default_icon).into(profile_image)
-
-                readMessage(firebaseUser!!.uid, userId, user!!.imageURL!!)
+//                Glide.with(applicationContext).load(user!!.imageURL)
+//                    .error(R.drawable.profile_default_icon).into(profile_image)
+//
+//                readMessage(firebaseUser!!.uid, userId, user!!.imageURL!!)
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
@@ -170,7 +187,7 @@ class MessageActivity : AppCompatActivity() {
                 for (s in p0.children) {
                     var imageModel = s.getValue(BackgroundImageModel::class.java)
                     imageModel?.let {
-                        if (imageModel.myid.equals(currentUser.id) && imageModel.userid.equals(
+                        if (imageModel.myid.equals(firebaseUser!!.uid) && imageModel.userid.equals(
                                 userId
                             )
                         ) {
@@ -203,8 +220,8 @@ class MessageActivity : AppCompatActivity() {
     }
 
     fun seenMessage(id: String) {
-        reference = FirebaseDatabase.getInstance().getReference("Chats")
-        seenListener = reference.addValueEventListener(object : ValueEventListener {
+        val seenMessageReference = FirebaseDatabase.getInstance().getReference("Chats")
+        seenListener = seenMessageReference.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
                 TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
             }
@@ -301,8 +318,8 @@ class MessageActivity : AppCompatActivity() {
 
     private fun readMessage(myid: String, userid: String, userImgURL: String) {
         mChats = ArrayList()
-        reference = FirebaseDatabase.getInstance().getReference("Chats")
-        reference.addValueEventListener(object : ValueEventListener {
+        val messagesReference = FirebaseDatabase.getInstance().getReference("Chats")
+        messagesReference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 mChats.clear()
                 for (snapshot in dataSnapshot.children) {
@@ -490,14 +507,14 @@ class MessageActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onResume() {
         super.onResume()
-        setStatus("online")
+//        setStatus("online")
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onPause() {
         super.onPause()
         reference.removeEventListener(seenListener)
-        setStatus("offline")
+//        setStatus("offline")
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
