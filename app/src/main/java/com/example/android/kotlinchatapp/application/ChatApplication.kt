@@ -58,7 +58,7 @@ class ChatApplication :Application(),LifecycleObserver{
         val hash:HashMap<String,String> =HashMap<String,String>()
 
         val date= LocalDateTime.now()
-        val formater= DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm a")
+        val formater= DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm a")
         val formatedDate=date.format(formater)
         hash.put("status",status)
         reference.child("status").setValue(status)

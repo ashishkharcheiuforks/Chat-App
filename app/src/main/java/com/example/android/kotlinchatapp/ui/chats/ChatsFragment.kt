@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,7 +14,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.android.kotlinchatapp.ui.model.Chat
 import com.example.android.kotlinchatapp.ui.model.User
 import com.example.android.kotlinchatapp.R
+import com.example.android.kotlinchatapp.ui.model.ChatList
 import com.example.android.kotlinchatapp.ui.notification.Token
+import com.example.android.kotlinchatapp.utils.FormatDate
+import com.example.android.kotlinchatapp.utils.FormatDate.dateFormatter_v3
 import com.example.android.myapplication.Adapter.UserAdapter
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -36,61 +40,130 @@ class ChatsFragment : Fragment() {
 
     private var userAdapter: UserAdapter? = null
     private var mUsers: MutableList<User>? = null
-
+    private var finalChatListUsers: MutableList<User>? = null
     internal var firebaseUser: FirebaseUser? = null
     lateinit var reference: DatabaseReference
 
-    private var userslist: ArrayList<String>? =null
-    lateinit var test :List<String>
+    private var userslist: ArrayList<ChatList>? = null
+    lateinit var test: List<String>
     lateinit var chatsViewModel: ChatsViewModel
+    lateinit var v:View
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val v=  inflater.inflate(R.layout.fragment_chats, container, false)
-        chatsViewModel= ChatsViewModel()
-        v.recycle_View?.layoutManager=LinearLayoutManager(context)!!
+         v = inflater.inflate(R.layout.fragment_chats, container, false)
+        chatsViewModel = ChatsViewModel()
+        v.recycle_View?.layoutManager = LinearLayoutManager(context)!!
         mUsers = ArrayList()
         userslist = ArrayList()
-        test= emptyList()
+        test = emptyList()
         firebaseUser = FirebaseAuth.getInstance().currentUser
-        reference = FirebaseDatabase.getInstance().getReference("Chats")
+
+        reference =
+            FirebaseDatabase.getInstance().getReference("ChatList").child(firebaseUser!!.uid)
         reference.addValueEventListener(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+
+            }
+
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 userslist!!.clear()
-                for (snapshot in dataSnapshot.children) {
-                    val chat = snapshot.getValue(Chat::class.java)
-                    if (chat!!.sender == firebaseUser!!.uid)
-                        userslist!!.add(chat.reciever!!)
-                    if (chat.reciever == firebaseUser!!.uid)
-                        userslist!!.add(chat.sender!!)
-
-
+                for (snapShot in dataSnapshot.children) {
+                    val chatList = snapShot.getValue(ChatList::class.java)
+                    userslist!!.add(chatList!!)
                 }
-                test=userslist?.distinct()!!
-                userslist?.clear()
-                for (index:Int in 0..(test.size-1)){
-                    userslist?.add(test.get(index))
-                }
-
-
-                readChat(v)
+                readChatList()
             }
-            override fun onCancelled(databaseError: DatabaseError) {
 
-            }
         })
         chatsViewModel.updateToken()
         chatsViewModel.token.observe(this, Observer {
             updateToken(it)
         })
-        //updateToken(FirebaseInstanceId.getInstance().getToken()!!)
+
+//        reference = FirebaseDatabase.getInstance().getReference("Chats")
+//        reference.addValueEventListener(object : ValueEventListener {
+//            override fun onDataChange(dataSnapshot: DataSnapshot) {
+//                userslist!!.clear()
+//                for (snapshot in dataSnapshot.children) {
+//                    val chat = snapshot.getValue(Chat::class.java)
+//                    if (chat!!.sender == firebaseUser!!.uid)
+//                        userslist!!.add(chat.reciever!!)
+//                    if (chat.reciever == firebaseUser!!.uid)
+//                        userslist!!.add(chat.sender!!)
+//
+//
+//                }
+//                test=userslist?.distinct()!!
+//                userslist?.clear()
+//                for (index:Int in 0..(test.size-1)){
+//                    userslist?.add(test.get(index))
+//                }
+//
+//
+//                readChat(v)
+//            }
+//            override fun onCancelled(databaseError: DatabaseError) {
+//
+//            }
+//        })
+//        chatsViewModel.updateToken()
+//        chatsViewModel.token.observe(this, Observer {
+//            updateToken(it)
+//        })
+//        //updateToken(FirebaseInstanceId.getInstance().getToken()!!)
         return v
     }
-    fun updateToken(newToken:String){
-        val reference=FirebaseDatabase.getInstance().getReference("Tokens")
-        val token= Token(newToken!!)
+
+    private fun readChatList() {
+        userslist?.sortWith(Comparator{o1, o2 ->
+            val firstDate=o1.date?.let { dateFormatter_v3(it) }
+            var secondDate = o2.date?.let { dateFormatter_v3(it) }
+            secondDate?.compareTo(firstDate!!)?:0
+        })
+
+        mUsers = ArrayList()
+        reference = FirebaseDatabase.getInstance().getReference("Users")
+        reference.addValueEventListener(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+
+            }
+
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                mUsers!!.clear()
+                for (snapShot in dataSnapshot.children) {
+                    val user = snapShot.getValue(User::class.java)
+                    for (chatList in userslist!!) {
+                        if (user!!.id.equals(chatList.id))
+                            mUsers!!.add(user)
+                    }
+                }
+                prepairUsersToShow()
+            }
+
+        })
+    }
+
+    private fun prepairUsersToShow() {
+        finalChatListUsers=ArrayList()
+        finalChatListUsers!!.clear()
+        for (chatList in userslist!!){
+            for (user in mUsers!!){
+                if (chatList.id.equals(user.id))
+                    finalChatListUsers!!.add(user)
+            }
+        }
+        v.container.visibility= if (mUsers!!.isEmpty()) VISIBLE else GONE
+
+        userAdapter= UserAdapter(context!!,finalChatListUsers!!,true)
+        v.recycle_View.adapter=userAdapter
+    }
+
+    fun updateToken(newToken: String) {
+        val reference = FirebaseDatabase.getInstance().getReference("Tokens")
+        val token = Token(newToken!!)
         reference.child(firebaseUser?.uid!!).setValue(token)
     }
 
@@ -126,49 +199,49 @@ class ChatsFragment : Fragment() {
 //            }
 //        })
 
- //   }
+    //   }
 
-    private fun readChat(v:View) {
-        reference = FirebaseDatabase.getInstance().getReference("Users")
-        reference.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                mUsers?.clear()
-                for (snapshot in dataSnapshot.children) {
-                    val user = snapshot.getValue(User::class.java)
-
-                    for (id in userslist!!) {
-                        if (user?.id.equals(id)) {
-                            if (mUsers?.size != 0) {
-//                                for (user1 in mUsers!!)
-//                                    if (!user?.id.equals(user1.id))
-                                        mUsers?.add(user!!)
-
-
-                            } else {
-                                mUsers!!.add(user!!)
-                            }
-                        }
-                    }
-                }
-                val chatUsers:List<User> = emptyList()
-//                for (index:Int in 0..(mUsers?.size!!-1) ){
-//                    for (current:Int in (index)..(mUsers?.size!!-2)){
-//                        if (mUsers?.get(index)?.id.equals(mUsers?.get(current)?.id)){
-//                            mUsers?.remove(mUsers?.get(current)!!)
+//    private fun readChat(v:View) {
+//        reference = FirebaseDatabase.getInstance().getReference("Users")
+//        reference.addValueEventListener(object : ValueEventListener {
+//            override fun onDataChange(dataSnapshot: DataSnapshot) {
+//                mUsers?.clear()
+//                for (snapshot in dataSnapshot.children) {
+//                    val user = snapshot.getValue(User::class.java)
+//
+//                    for (id in userslist!!) {
+//                        if (user?.id.equals(id)) {
+//                            if (mUsers?.size != 0) {
+////                                for (user1 in mUsers!!)
+////                                    if (!user?.id.equals(user1.id))
+//                                        mUsers?.add(user!!)
+//
+//
+//                            } else {
+//                                mUsers!!.add(user!!)
+//                            }
 //                        }
 //                    }
 //                }
-                if (mUsers!!.isNotEmpty())
-                    v.container.visibility=GONE
-                userAdapter = UserAdapter(context, mUsers!!,true)
-                v.recycle_View?.setAdapter(userAdapter)
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {
-
-            }
-        })
-
-    }
+//                val chatUsers:List<User> = emptyList()
+////                for (index:Int in 0..(mUsers?.size!!-1) ){
+////                    for (current:Int in (index)..(mUsers?.size!!-2)){
+////                        if (mUsers?.get(index)?.id.equals(mUsers?.get(current)?.id)){
+////                            mUsers?.remove(mUsers?.get(current)!!)
+////                        }
+////                    }
+////                }
+//                if (mUsers!!.isNotEmpty())
+//                    v.container.visibility=GONE
+//                userAdapter = UserAdapter(context, mUsers!!,true)
+//                v.recycle_View?.setAdapter(userAdapter)
+//            }
+//
+//            override fun onCancelled(databaseError: DatabaseError) {
+//
+//            }
+//        })
+//
+//    }
 
 }

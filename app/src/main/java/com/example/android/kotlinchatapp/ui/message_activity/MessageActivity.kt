@@ -52,6 +52,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 import com.android.volley.toolbox.Volley
+import com.example.android.kotlinchatapp.utils.FormatDate
 
 class MessageActivity : AppCompatActivity() {
     private val PICK_IMAGE_REQUEST = 71
@@ -139,15 +140,15 @@ class MessageActivity : AppCompatActivity() {
         referenceBackground =
             FirebaseDatabase.getInstance().getReference("Backgrounds").child(firebaseUser!!.uid)
 
-        val userImageReference=FirebaseDatabase.getInstance().getReference("Users")
+        val userImageReference = FirebaseDatabase.getInstance().getReference("Users")
             .child(userId).child("imageURL")
-        userImageReference.addValueEventListener(object :ValueEventListener{
+        userImageReference.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
 
             }
 
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val userImage=dataSnapshot.getValue(String::class.java)
+                val userImage = dataSnapshot.getValue(String::class.java)
                 Glide.with(applicationContext).load(userImage)
                     .error(R.drawable.profile_default_icon).into(profile_image)
 
@@ -241,7 +242,7 @@ class MessageActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     fun sendMessage(sender: String, reciever: String, message: String, type: String) {
         val date = LocalDateTime.now()
-        val formater = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+        val formater = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm a")
         val formatedDate = date.format(formater)
         val reference = FirebaseDatabase.getInstance().reference
         val hashMap = HashMap<String, Any>()
@@ -253,6 +254,43 @@ class MessageActivity : AppCompatActivity() {
         hashMap["date"] = formatedDate
 
         reference.child("Chats").push().setValue(hashMap)
+        val currentDate=FormatDate.currentdateinDdMmYyyyHhMmA()
+        var chatListReference =
+            FirebaseDatabase.getInstance().getReference("ChatList").child(firebaseUser!!.uid)
+                .child(userId)
+        chatListReference.addListenerForSingleValueEvent(object :ValueEventListener{
+            override fun onCancelled(p0: DatabaseError) {
+
+            }
+
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                chatListReference.child("date").setValue(currentDate)
+                if (!dataSnapshot.exists()){
+                    chatListReference.child("id").setValue(userId)
+                }
+
+            }
+
+        })
+
+        var chatListReference2 =
+            FirebaseDatabase.getInstance().getReference("ChatList").child(userId)
+                .child(firebaseUser!!.uid)
+        chatListReference2.addListenerForSingleValueEvent(object :ValueEventListener{
+            override fun onCancelled(p0: DatabaseError) {
+
+            }
+
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                chatListReference2.child("date").setValue(currentDate)
+                if (!dataSnapshot.exists()){
+                    chatListReference2.child("id").setValue(firebaseUser!!.uid)
+                }
+
+            }
+
+        })
+
         val userReference = FirebaseDatabase.getInstance().getReference("Users").child(userId)
         userReference.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {

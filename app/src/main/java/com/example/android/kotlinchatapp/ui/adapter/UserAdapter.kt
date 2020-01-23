@@ -16,6 +16,7 @@ import com.example.android.kotlinchatapp.ui.message_activity.MessageActivity
 import com.example.android.kotlinchatapp.ui.model.User
 import com.example.android.kotlinchatapp.R
 import com.example.android.kotlinchatapp.ui.model.Chat
+import com.example.android.kotlinchatapp.utils.FormatDate.getDateForLastMessage
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -31,8 +32,9 @@ class UserAdapter(
 ) : RecyclerView.Adapter<UserAdapter.ViewHolder>() {
     val firebaseUser = FirebaseAuth.getInstance().currentUser
     val refrence = FirebaseDatabase.getInstance().getReference("Chats")
-    val myId = firebaseUser?.let { it.uid}?:""
+    val myId = firebaseUser?.let { it.uid } ?: ""
     lateinit var con: Context
+    lateinit var holder: ViewHolder
     override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): ViewHolder {
         con = viewGroup.context
         val view = LayoutInflater.from(mContext).inflate(R.layout.user_item, viewGroup, false)
@@ -41,7 +43,8 @@ class UserAdapter(
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, i: Int) {
-        val user = users.get(i)
+        holder = viewHolder
+        var user = users.get(i)
         viewHolder.username.text = user.userName
 //        if (user.imageURL == "default") {
 //            viewHolder.profile_image.setImageResource(R.mipmap.ic_launcher_round)
@@ -57,9 +60,10 @@ class UserAdapter(
                 viewHolder.img_online.visibility = GONE
                 viewHolder.img_offline.visibility = VISIBLE
             }
-            getLastMessage(users[i].id!!, viewHolder.lastMessage)
+            getLastMessage(users[i].id!!, viewHolder.lastMessage,user)
             viewHolder.lastMessage.visibility = VISIBLE
-
+            viewHolder.itemView.message_seen.visibility = VISIBLE
+            viewHolder.itemView.lastMessageDate.visibility = VISIBLE
         } else {
             viewHolder.img_online.visibility = GONE
             viewHolder.img_offline.visibility = GONE
@@ -95,7 +99,7 @@ class UserAdapter(
         }
     }
 
-    fun getLastMessage(userId: String, last_msg: TextView) {
+    fun getLastMessage(userId: String, last_msg: TextView,user:User) {
         var lastMessage: Chat? = null
         refrence.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
@@ -116,7 +120,7 @@ class UserAdapter(
                     if (lastMessage!!.type.equals("image")) {
                         last_msg.text = "Image"
                         last_msg.setCompoundDrawablesWithIntrinsicBounds(
-                            if(!lastMessage!!.isseen!!&& lastMessage!!.reciever==myId)R.drawable.ic_camera_un_read_24dp else R.drawable.ic_black_camera,
+                            if (!lastMessage!!.isseen!! && lastMessage!!.reciever == myId) R.drawable.ic_camera_un_read_24dp else R.drawable.ic_black_camera,
                             0,
                             0,
                             0
@@ -126,9 +130,19 @@ class UserAdapter(
                         last_msg.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
                     }
 
-                    if (!lastMessage!!.isseen!!&& lastMessage!!.reciever==myId){
+                    if (!lastMessage!!.isseen!! && lastMessage!!.reciever == myId) {
                         last_msg.setTextColor(con.getColor(R.color.un_read_message))
                     }
+                    else
+                        last_msg.setTextColor(con.getColor(R.color.color_grey))
+                    if (lastMessage!!.sender.equals(myId)) {
+                            Glide.with(con).load(if (it.isseen!!) user.imageURL else R.drawable.message_sent_icon).error(
+                                R.drawable.profile_default_icon
+                            ).into(holder.itemView.message_seen)
+                    }
+                    else
+                        holder.itemView.message_seen.visibility= GONE
+                    holder.itemView.lastMessageDate.text=getDateForLastMessage(lastMessage!!.date!!)
                 }
             }
 
