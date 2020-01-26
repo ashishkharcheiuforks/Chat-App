@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View.GONE
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
@@ -23,6 +24,7 @@ import com.google.android.material.tabs.TabLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
+import es.dmoral.toasty.Toasty
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.activity_main.profile_image
 import java.time.LocalDateTime
@@ -53,18 +55,18 @@ class HomeActivity : AppCompatActivity() {
         reference=FirebaseDatabase.getInstance().getReference("Users").child(userID)
         reference.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
-
+            Toasty.error(applicationContext,p0.message,Toasty.LENGTH_LONG).show()
             }
 
             override fun onDataChange(dataSnapshot: DataSnapshot) {
 
                 val user = dataSnapshot.getValue(User::class.java)
-                username.text = user!!.userName
+                username.text = user!!.userName?:""
 //                if (user.imageURL == "default")
 //                    profile_image.setImageResource(R.mipmap.ic_launcher_round)
 //                else
                     Glide.with(applicationContext).load(user.imageURL).error(R.drawable.profile_default_icon).into(profile_image)
-
+                    progress_bar.visibility=GONE
 
                 //profile_image.setImageResource(R.mipmap.ic_launcher);
             }

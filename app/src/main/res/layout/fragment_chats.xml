@@ -10,7 +10,8 @@
     <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycle_View"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:background="#ffffff"/>
     <LinearLayout
             android:id="@+id/container"
             android:gravity="center"
@@ -44,6 +45,15 @@
                 android:textSize="@dimen/_18ssp"/>
 
     </LinearLayout>
+    <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:theme="@style/CircularProgress"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

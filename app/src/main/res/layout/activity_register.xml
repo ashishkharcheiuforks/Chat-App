@@ -51,7 +51,11 @@
                     android:layout_height="wrap_content"
                     android:inputType="text"
                     android:text="@={vm.userName}"
-                    android:hint="User Name"/>
+                    android:hint="User Name"
+                    android:maxLines="1"
+                    android:textColorHighlight="@color/colorPrimary"
+                    android:textCursorDrawable="@color/colorPrimary"
+                    android:backgroundTint="@color/colorPrimaryDark"/>
             <com.rengwuxian.materialedittext.MaterialEditText
                     android:id="@+id/email"
                     android:layout_width="match_parent"
@@ -59,7 +63,11 @@
                     android:layout_height="wrap_content"
                     android:inputType="textEmailAddress"
                     android:text="@={vm.email}"
-                    android:hint="Email"/>
+                    android:hint="Email"
+                    android:maxLines="1"
+                    android:textColorHighlight="@color/colorPrimary"
+                    android:textCursorDrawable="@color/colorPrimary"
+                    android:backgroundTint="@color/colorPrimaryDark"/>
             <com.rengwuxian.materialedittext.MaterialEditText
                     android:id="@+id/password"
                     android:layout_width="match_parent"
@@ -67,7 +75,11 @@
                     android:layout_height="wrap_content"
                     android:inputType="textPassword"
                     android:text="@={vm.password}"
-                    android:hint="Password"/>
+                    android:hint="Password"
+                    android:maxLines="1"
+                    android:textColorHighlight="@color/colorPrimary"
+                    android:textCursorDrawable="@color/colorPrimary"
+                    android:backgroundTint="@color/colorPrimaryDark"/>
 
             <Button
                     android:id="@+id/btn_register"

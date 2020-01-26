@@ -24,17 +24,25 @@
                 android:background="@color/colorPrimaryDark"
                 android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
                 app:popupTheme="@style/MenuStyle">
-
+            <ProgressBar
+                    android:id="@+id/toolbar_progress_bar"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:theme="@style/toolbarCircularProgress"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
             <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/profile_image"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:transitionName="@string/profile_photo" />
 
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/data_container"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:orientation="vertical">
 
                 <TextView
@@ -47,7 +55,10 @@
                         android:textSize="15dp"
                         android:textStyle="bold"
                         android:transitionName="@string/userName"
-                        tools:text="george" />
+                        tools:text="george"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintBottom_toTopOf="@id/userStatus"/>
 
                 <TextView
                         android:id="@+id/userStatus"
@@ -58,9 +69,12 @@
                         android:textColor="#CCCACA"
                         android:textSize="12dp"
                         android:transitionName="@string/userStatus"
-                        tools:text="online" />
+                        tools:text="online"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/username"/>
 
-            </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.appcompat.widget.Toolbar>
 
@@ -134,6 +148,7 @@
                         android:layout_marginStart="5dp"
                         android:layout_toStartOf="@id/send_image"
                         android:background="@android:color/transparent"
+                        android:textCursorDrawable="@color/colorPrimary"
                         android:hint="type a message..." />
 
 
@@ -154,7 +169,15 @@
                     android:background="@drawable/ic_send" />
         </RelativeLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
-
+    <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:theme="@style/CircularProgress"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
     <androidx.constraintlayout.widget.Guideline
             android:id="@+id/start_guideline"
             android:layout_width="wrap_content"

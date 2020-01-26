@@ -8,6 +8,8 @@ import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,15 +17,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.android.kotlinchatapp.ui.model.User
 
 import com.example.android.kotlinchatapp.R
+import com.example.android.kotlinchatapp.utils.SpacingItemDecoration
 import com.example.android.myapplication.Adapter.UserAdapter
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import kotlinx.android.synthetic.main.fragment_chats.view.recycle_View
 import kotlinx.android.synthetic.main.fragment_users.*
 import kotlinx.android.synthetic.main.fragment_users.view.*
+import kotlinx.android.synthetic.main.fragment_users.view.progress_bar
 import java.util.ArrayList
 
 // TODO: Rename parameter arguments, choose names that match
@@ -37,7 +40,7 @@ private const val ARG_PARAM2 = "param2"
  */
 class UsersFragment : Fragment() {
     private var recyclerView: RecyclerView? = null
-
+    private val spacingItemDecoration=SpacingItemDecoration()
      var userAdapter: UserAdapter?=null
     lateinit var mUsers: ArrayList<User>
     override fun onCreateView(
@@ -47,6 +50,7 @@ class UsersFragment : Fragment() {
         // Inflate the layout for this fragment
         val v= inflater.inflate(R.layout.fragment_users, container, false)
         //val recycle_View:RecyclerView = v.findViewById(R.id.recycle_View)
+        v.recycle_View.addItemDecoration(SpacingItemDecoration())
 
         return v
     }
@@ -73,6 +77,7 @@ class UsersFragment : Fragment() {
             }
 
             override fun onTextChanged(charSequence: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                v.progress_bar.visibility= VISIBLE
                 searchUsers(charSequence.toString().toLowerCase())
             }
 
@@ -103,6 +108,7 @@ class UsersFragment : Fragment() {
                         mUsers?.add(user!!)
                     }
                 }
+                view!!.progress_bar.visibility= GONE
                 userAdapter= UserAdapter(context!!,mUsers!!,false)
                 recycle_View.adapter=userAdapter!!
             }
@@ -118,6 +124,8 @@ class UsersFragment : Fragment() {
         databaseReference.addValueEventListener(object :ValueEventListener{
             override fun onCancelled(p0: DatabaseError) {
                 Toast.makeText(context!!,p0.message,Toast.LENGTH_LONG).show()
+                v.progress_bar.visibility= GONE
+
             }
 
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -136,6 +144,7 @@ class UsersFragment : Fragment() {
                         userAdapter = UserAdapter(context, mUsers!!,false)!!
                         v.recycle_View.adapter = userAdapter!!
                     }
+                    v.progress_bar.visibility= GONE
 
 
             }

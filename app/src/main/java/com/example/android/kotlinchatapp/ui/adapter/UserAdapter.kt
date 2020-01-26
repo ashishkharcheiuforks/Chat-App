@@ -8,6 +8,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.TextView
 
@@ -35,6 +36,7 @@ class UserAdapter(
     val myId = firebaseUser?.let { it.uid } ?: ""
     lateinit var con: Context
     lateinit var holder: ViewHolder
+
     override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): ViewHolder {
         con = viewGroup.context
         val view = LayoutInflater.from(mContext).inflate(R.layout.user_item, viewGroup, false)
@@ -51,7 +53,7 @@ class UserAdapter(
 //        } else
         Glide.with(mContext!!).load(user.imageURL).error(R.drawable.profile_default_icon)
             .into(viewHolder.profile_image).waitForLayout()
-
+        viewHolder.onBind(i)
         if (isChat) {
             if (user.status.equals("online")) {
                 viewHolder.img_online.visibility = VISIBLE
@@ -60,7 +62,7 @@ class UserAdapter(
                 viewHolder.img_online.visibility = GONE
                 viewHolder.img_offline.visibility = VISIBLE
             }
-            getLastMessage(users[i].id!!, viewHolder.lastMessage,user)
+            holder.getLastMessage(users[i].id!!, viewHolder.lastMessage,user)
             viewHolder.lastMessage.visibility = VISIBLE
             viewHolder.itemView.message_seen.visibility = VISIBLE
             viewHolder.itemView.lastMessageDate.visibility = VISIBLE
@@ -89,7 +91,9 @@ class UserAdapter(
         var img_online: ImageView
         var img_offline: ImageView
         var lastMessage: TextView
-
+        fun onBind(index:Int){
+            animateView(itemView)
+        }
         init {
             username = itemView.user_name
             profile_image = itemView.profile_image
@@ -97,56 +101,68 @@ class UserAdapter(
             img_online = itemView.img_online
             lastMessage = itemView.lastMessage
         }
-    }
+        fun getLastMessage(userId: String, last_msg: TextView,user:User) {
+            var lastMessage: Chat? = null
+            refrence.addValueEventListener(object : ValueEventListener {
+                override fun onCancelled(p0: DatabaseError) {
 
-    fun getLastMessage(userId: String, last_msg: TextView,user:User) {
-        var lastMessage: Chat? = null
-        refrence.addValueEventListener(object : ValueEventListener {
-            override fun onCancelled(p0: DatabaseError) {
-
-            }
-
-            override fun onDataChange(p0: DataSnapshot) {
-                for (snapshot in p0.children) {
-                    var chat = snapshot.getValue(Chat::class.java)
-                    if (chat!!.reciever.equals(myId) && chat.sender.equals(userId) || chat.reciever.equals(
-                            userId
-                        ) && chat.sender.equals(myId)
-                    ) {
-                        lastMessage = chat
-                    }
                 }
-                lastMessage?.let {
-                    if (lastMessage!!.type.equals("image")) {
-                        last_msg.text = "Image"
-                        last_msg.setCompoundDrawablesWithIntrinsicBounds(
-                            if (!lastMessage!!.isseen!! && lastMessage!!.reciever == myId) R.drawable.ic_camera_un_read_24dp else R.drawable.ic_black_camera,
-                            0,
-                            0,
-                            0
-                        )
-                    } else {
-                        last_msg.text = it.message
-                        last_msg.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
-                    }
 
-                    if (!lastMessage!!.isseen!! && lastMessage!!.reciever == myId) {
-                        last_msg.setTextColor(con.getColor(R.color.un_read_message))
+                override fun onDataChange(p0: DataSnapshot) {
+                    for (snapshot in p0.children) {
+                        var chat = snapshot.getValue(Chat::class.java)
+                        if (chat!!.reciever.equals(myId) && chat.sender.equals(userId) || chat.reciever.equals(
+                                userId
+                            ) && chat.sender.equals(myId)
+                        ) {
+                            lastMessage = chat
+                        }
                     }
-                    else
-                        last_msg.setTextColor(con.getColor(R.color.color_grey))
-                    if (lastMessage!!.sender.equals(myId)) {
+                    lastMessage?.let {
+                        if (lastMessage!!.type.equals("image")) {
+                            last_msg.text = "Image"
+                            last_msg.setCompoundDrawablesWithIntrinsicBounds(
+                                if (!lastMessage!!.isseen!! && lastMessage!!.reciever == myId) R.drawable.ic_camera_un_read_24dp else R.drawable.ic_black_camera,
+                                0,
+                                0,
+                                0
+                            )
+                        } else {
+                            last_msg.text = it.message
+                            last_msg.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
+                        }
+
+                        if (!lastMessage!!.isseen!! && lastMessage!!.reciever == myId) {
+                            last_msg.setTextColor(con.getColor(R.color.un_read_message))
+                        }
+                        else
+                            last_msg.setTextColor(con.getColor(R.color.color_grey))
+                        if (lastMessage!!.sender.equals(myId)) {
                             Glide.with(con).load(if (it.isseen!!) user.imageURL else R.drawable.message_sent_icon).error(
                                 R.drawable.profile_default_icon
-                            ).into(holder.itemView.message_seen)
+                            ).into(itemView.message_seen)
+                        }
+                        else
+                            itemView.message_seen.visibility= GONE
+                        itemView.lastMessageDate.text=getDateForLastMessage(lastMessage!!.date!!)
                     }
-                    else
-                        holder.itemView.message_seen.visibility= GONE
-                    holder.itemView.lastMessageDate.text=getDateForLastMessage(lastMessage!!.date!!)
                 }
+
+
+            })
+        }
+
+        fun animateView(viewToAnimate: View) {
+            if (viewToAnimate.animation == null) {
+                val animation = AnimationUtils.loadAnimation(
+                    viewToAnimate.context,
+                    R.anim.scale__xy
+                )
+                viewToAnimate.animation = animation
             }
-
-
-        })
+        }
     }
+
+
+
 }

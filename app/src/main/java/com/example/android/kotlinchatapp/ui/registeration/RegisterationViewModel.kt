@@ -1,8 +1,10 @@
 package com.example.android.kotlinchatapp.ui.registeration
 
 import android.content.Intent
+import android.os.Build
 import android.util.Patterns
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.android.kotlinchatapp.ui.activities.HomeActivity
@@ -14,6 +16,8 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.activity_register.*
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class RegisterationViewModel : ViewModel() {
     var email = ""
@@ -55,6 +59,7 @@ class RegisterationViewModel : ViewModel() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun register() {
         navigator.showLoading()
         auth.createUserWithEmailAndPassword(email.trim().toString(), password.trim().toString())
@@ -70,7 +75,8 @@ class RegisterationViewModel : ViewModel() {
 
                     hashMap?.put("imageURL","default")
                     hashMap?.put("search",userName.trim().toString().toLowerCase())
-
+                    hashMap.put("lastSeen",getDate())
+                    hashMap.put("status","online")
                     reference.setValue(hashMap).addOnCompleteListener(OnCompleteListener<Void>(){
                         if (it.isSuccessful){
                             navigator.hideLoading()
@@ -89,6 +95,13 @@ class RegisterationViewModel : ViewModel() {
 
     fun navigateToLogin() {
         navigateToLogin.value = true
+    }
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun getDate():String {
+        val date = LocalDateTime.now()
+        val formater = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm aa")
+        val formatedDate = date.format(formater)
+        return formatedDate
     }
 
 }

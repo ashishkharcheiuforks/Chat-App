@@ -14,53 +14,61 @@ import com.google.firebase.database.FirebaseDatabase
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-class ChatApplication :Application(),LifecycleObserver{
+class ChatApplication : Application(), LifecycleObserver {
     lateinit var reference: DatabaseReference
     internal var firebaseUser: FirebaseUser? = null
     lateinit var mAuth: FirebaseAuth
+    var logedIn = true
     override fun onCreate() {
         super.onCreate()
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
         mAuth = FirebaseAuth.getInstance()
         firebaseUser = mAuth.currentUser
-        reference=FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser!!.uid)
+        firebaseUser?.let {
+            reference =
+                FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser!!.uid)
+        } ?: kotlin.run { logedIn = false }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    fun onStart(){
-        setStatus("online")
+    fun onStart() {
+        if (logedIn)
+            setStatus("online")
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-     fun onResume() {
-        setStatus("online")
+    fun onResume() {
+        if (logedIn)
+            setStatus("online")
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-     fun onPause() {
-        setStatus("offline")
+    fun onPause() {
+        if (logedIn)
+            setStatus("offline")
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-     fun onStop() {
-        setStatus("offline")
+    fun onStop() {
+        if (logedIn)
+            setStatus("offline")
 
     }
 
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun setStatus(status:String){
-        reference= FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser?.uid!!)
-        val hash:HashMap<String,String> =HashMap<String,String>()
+    private fun setStatus(status: String) {
+        reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser?.uid!!)
+        val hash: HashMap<String, String> = HashMap<String, String>()
 
-        val date= LocalDateTime.now()
-        val formater= DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm a")
-        val formatedDate=date.format(formater)
-        hash.put("status",status)
+        val date = LocalDateTime.now()
+        val formater = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm a")
+        val formatedDate = date.format(formater)
+        hash.put("status", status)
         reference.child("status").setValue(status)
         reference.child("lastSeen").setValue(formatedDate)
     }

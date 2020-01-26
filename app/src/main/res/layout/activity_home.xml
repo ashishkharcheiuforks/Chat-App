@@ -19,7 +19,15 @@
                 android:background="@color/colorPrimaryDark"
                 android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
                 app:popupTheme="@style/MenuStyle">
-
+            <ProgressBar
+                    android:id="@+id/progress_bar"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:theme="@style/toolbarCircularProgress"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
             <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/profile_image"
                     android:layout_width="40dp"
@@ -35,6 +43,7 @@
                     android:textSize="15dp"
                     android:textColor="#fff"
                     android:textStyle="bold" />
+
         </androidx.appcompat.widget.Toolbar>
         <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tab_layout"

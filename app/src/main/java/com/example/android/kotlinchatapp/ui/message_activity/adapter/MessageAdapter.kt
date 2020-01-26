@@ -8,6 +8,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
@@ -28,6 +29,8 @@ class MessageAdapter(private val mContext: Context, private val mChats: List<Cha
     internal var firebaseUser: FirebaseUser? = null
     lateinit var onClickItem: OnClickItem
     lateinit var context: Context
+    var scrollDirection = ScrollDirection.DOWN
+
     val formatDate=FormatDate
     override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): ViewHolder {
         context=viewGroup.context
@@ -45,6 +48,7 @@ class MessageAdapter(private val mContext: Context, private val mChats: List<Cha
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(viewHolder: ViewHolder, i: Int) {
         val chat = mChats[i]
+        viewHolder.onBind(i)
         if (chat.type.equals("image")){
             viewHolder.show_image.visibility=VISIBLE
             viewHolder.show_message.visibility= GONE
@@ -127,7 +131,9 @@ class MessageAdapter(private val mContext: Context, private val mChats: List<Cha
         var txt_seen:TextView
         var show_image:ImageView
         var date:TextView
-
+        fun onBind(position:Int){
+            animateView(itemView)
+        }
         init {
             show_message = itemView.findViewById(R.id.show_message)
             profile_image = itemView.findViewById(R.id.profile_image)
@@ -135,5 +141,19 @@ class MessageAdapter(private val mContext: Context, private val mChats: List<Cha
             show_image=itemView.findViewById(R.id.show_image)
             date=itemView.findViewById(R.id.messageDate)
         }
+        fun animateView(viewToAnimate: View) {
+            if (viewToAnimate.animation == null) {
+                if (scrollDirection == ScrollDirection.UP) {
+                    val animation = AnimationUtils.loadAnimation(
+                        viewToAnimate.context,
+                        R.anim.slide_from_top
+                    )
+                    viewToAnimate.animation = animation
+                }
+            }
+        }
+    }
+    enum class ScrollDirection {
+        UP, DOWN
     }
 }

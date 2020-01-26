@@ -13,10 +13,12 @@ import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.View.GONE
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.Request
 import com.android.volley.RequestQueue
 import com.android.volley.VolleyError
@@ -53,6 +55,8 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 import com.android.volley.toolbox.Volley
 import com.example.android.kotlinchatapp.utils.FormatDate
+import com.example.android.kotlinchatapp.utils.FormatDate.getDate
+import com.example.android.myapplication.Adapter.UserAdapter
 
 class MessageActivity : AppCompatActivity() {
     private val PICK_IMAGE_REQUEST = 71
@@ -102,7 +106,13 @@ class MessageActivity : AppCompatActivity() {
         val linearLayoutManager = LinearLayoutManager(applicationContext)
         linearLayoutManager.stackFromEnd = true
         recycle_view.layoutManager = linearLayoutManager
-
+        recycle_view.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                messageAdapter.scrollDirection =
+                    if (dy > 0) MessageAdapter.ScrollDirection.DOWN else MessageAdapter.ScrollDirection.UP
+            }
+        })
 
         firebaseUser = FirebaseAuth.getInstance().currentUser
 
@@ -144,13 +154,14 @@ class MessageActivity : AppCompatActivity() {
             .child(userId).child("imageURL")
         userImageReference.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
-
+                toolbar_progress_bar.visibility=GONE
             }
 
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val userImage = dataSnapshot.getValue(String::class.java)
                 Glide.with(applicationContext).load(userImage)
                     .error(R.drawable.profile_default_icon).into(profile_image)
+                toolbar_progress_bar.visibility=GONE
 
                 readMessage(firebaseUser!!.uid, userId, userImage!!)
             }
@@ -163,7 +174,7 @@ class MessageActivity : AppCompatActivity() {
                 if (user!!.status.equals("online"))
                     userStatus.text = user!!.status
                 else
-                    userStatus.text = user!!.lastSeen?.let { it } ?: kotlin.run { "" }
+                    userStatus.text = user!!.lastSeen?.let { getDate(it) } ?: kotlin.run { "" }
 
 //                if (user.imageURL == "default")
 //                    profile_image.setImageResource(R.mipmap.ic_launcher_round)
@@ -378,12 +389,15 @@ class MessageActivity : AppCompatActivity() {
                         }
 
                     }
+                    progress_bar.visibility= View.GONE
+
                     recycle_view.adapter = messageAdapter
                 }
 
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
+                progress_bar.visibility= View.GONE
 
             }
         })

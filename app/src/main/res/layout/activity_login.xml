@@ -54,7 +54,11 @@
                     android:hint="Email"
                     android:text="@={vm.email}"
                     android:inputType="textEmailAddress"
-                    app:met_floatingLabel="normal" />
+                    app:met_floatingLabel="normal"
+                    android:maxLines="1"
+                    android:textColorHighlight="@color/colorPrimary"
+                    android:textCursorDrawable="@color/colorPrimary"
+                    android:backgroundTint="@color/colorPrimaryDark"/>
 
             <com.rengwuxian.materialedittext.MaterialEditText
                     android:id="@+id/password"
@@ -63,7 +67,11 @@
                     android:hint="Password"
                     android:text="@={vm.password}"
                     android:inputType="textPassword"
-                    app:met_floatingLabel="normal" />
+                    app:met_floatingLabel="normal"
+                    android:maxLines="1"
+                    android:textColorHighlight="@color/colorPrimary"
+                    android:textCursorDrawable="@color/colorPrimary"
+                    android:backgroundTint="@color/colorPrimaryDark"/>
 
             <Button
                     android:id="@+id/btn_login"

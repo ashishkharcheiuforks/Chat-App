@@ -4,7 +4,8 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp">
+        android:padding="8dp"
+        android:background="#ffffff">
 
     <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profile_image"
@@ -32,32 +33,30 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/img_online"
-            android:layout_width="15dp"
-            android:layout_height="15dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:layout_marginStart="1dp"
             android:layout_marginLeft="1dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginRight="5dp"
-            android:src="@mipmap/ic_launcher_round"
+            android:src="@drawable/online_icon_24dp"
             android:visibility="gone"
             app:civ_border_color="#05df29"
-            app:civ_border_width="10dp"
+            app:civ_border_width="0dp"
+            android:background="@drawable/status_bg"
             app:layout_constraintBottom_toBottomOf="@id/profile_image"
             app:layout_constraintEnd_toEndOf="@id/profile_image"
             />
 
     <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/img_offline"
-            android:layout_width="15dp"
-            android:layout_height="15dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:layout_marginStart="1dp"
             android:layout_marginLeft="1dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginRight="5dp"
-            android:src="@mipmap/ic_launcher_round"
+            android:src="@drawable/offline_icon_24dp"
             android:visibility="gone"
-            app:civ_border_color="#bfbfbf"
-            app:civ_border_width="10dp"
+            app:civ_border_color="#ffffff"
+            app:civ_border_width="0dp"
+            android:background="@drawable/status_bg"
             app:layout_constraintBottom_toBottomOf="@id/profile_image"
             app:layout_constraintEnd_toEndOf="@id/profile_image"/>
 

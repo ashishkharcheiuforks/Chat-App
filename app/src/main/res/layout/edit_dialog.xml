@@ -34,7 +34,10 @@
             android:hint="edit"
             app:layout_constraintEnd_toEndOf="@id/end_guideline"
             app:layout_constraintStart_toStartOf="@id/start_guideline21"
-            app:layout_constraintTop_toBottomOf="@id/image" />
+            app:layout_constraintTop_toBottomOf="@id/image"
+            android:textColorHighlight="@color/colorPrimary"
+            android:textCursorDrawable="@color/colorPrimary"
+            android:backgroundTint="@color/colorPrimaryDark"/>
 
     <Button
             android:id="@+id/save_btn"

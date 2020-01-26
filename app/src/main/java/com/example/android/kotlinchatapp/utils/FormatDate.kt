@@ -16,6 +16,11 @@ object FormatDate {
     @SuppressLint("SimpleDateFormat")
     @RequiresApi(Build.VERSION_CODES.O)
     fun getDate(date: String): String {
+        val format=SimpleDateFormat("yyyy-MM-dd hh:mm aa")
+        val formatForTime=SimpleDateFormat("hh:mm aa")
+        val formatForDay=SimpleDateFormat("EE",Locale.ENGLISH)
+        val formatForDate=SimpleDateFormat("DD MMM",Locale.ENGLISH)
+        val messageDate=format.parse(date)
         val mTime = date.split(" ")[1]
         val mDate = date.split(" ")[0]
         val sdf = SimpleDateFormat("yyyy-MM-dd")
@@ -24,9 +29,11 @@ object FormatDate {
         val ago = DateUtils.getRelativeTimeSpanString(time, now, DateUtils.SECOND_IN_MILLIS)
         val days = TimeUnit.MILLISECONDS.toDays(now - time)
         return when {
-            days.toInt() == 0 -> "today at $mTime"
-            days.toInt() == 1 -> "yesterday at $mTime"
-            else -> "$mDate at $mTime"
+            days.toInt() == 0 -> "today at ${formatForTime.format(messageDate)}"
+            days.toInt() == 1 -> "yesterday at ${formatForTime.format(messageDate)}"
+            days.toInt() in 2..6-> "${formatForDay.format(messageDate)} at ${formatForTime.format(messageDate)}"
+            days.toInt() in 7..365 -> "${formatForDate.format(messageDate)} at ${formatForTime.format(messageDate)}"
+            else -> "$mDate at ${formatForTime.format(messageDate)}"
         }
 
     }
@@ -35,7 +42,7 @@ object FormatDate {
     @RequiresApi(Build.VERSION_CODES.O)
     fun currentdateinDdMmYyyyHhMmA(): String {
         val date = LocalDateTime.now()
-        val formater = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm a")
+        val formater = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss a")
         val formatedDate = date.format(formater)
         return formatedDate
     }
@@ -43,7 +50,7 @@ object FormatDate {
     fun dateFormatter_v3(time: String): Date {
         var date = time
         //17-10-2019T12:55 PM
-        var spf = SimpleDateFormat("yyyy-MM-dd hh:mm a", Locale.ENGLISH)
+        var spf = SimpleDateFormat("yyyy-MM-dd hh:mm:ss a", Locale.ENGLISH)
         return spf.parse(date)
     }
 

@@ -13,6 +13,8 @@ import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.Toast
@@ -127,7 +129,8 @@ class ProfileFragment : Fragment(), ProfileNavigator {
         v.edit_phone.setOnClickListener { openEditDialog("phone") }
         reference.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                v.progress_bar.visibility= GONE
+
             }
 
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -145,6 +148,9 @@ class ProfileFragment : Fragment(), ProfileNavigator {
                     }
 //                }
                 }
+                v.profileContainer.visibility= VISIBLE
+                v.progress_bar.visibility= GONE
+
             }
 
         })
@@ -159,21 +165,21 @@ class ProfileFragment : Fragment(), ProfileNavigator {
             "userName" -> {
                 dialog.edit.hint = "enter your name"
                 dialog.edit.filters = arrayOf<InputFilter>(InputFilter.LengthFilter(15))
-                dialog.edit.setText(user!!.userName?.let { it } ?: kotlin.run { "name" })
+                dialog.edit.setText(user!!.userName?.let { it } ?: kotlin.run { "" })
             }
             "bio" -> {
                 dialog.title.text = "Bio"
                 dialog.edit.hint = "enter your Bio"
                 dialog.edit.filters = arrayOf<InputFilter>(InputFilter.LengthFilter(25))
                 dialog.image.setImageResource(R.drawable.bio_icon)
-                dialog.edit.setText(user!!.bio?.let { it } ?: "bio")
+                dialog.edit.setText(user!!.bio?.let { it } ?: "")
             }
             "phone" -> {
                 dialog.title.text = "Phone"
                 dialog.edit.hint = "enter your Phone"
                 dialog.edit.filters = arrayOf<InputFilter>(InputFilter.LengthFilter(11))
                 dialog.image.setImageResource(R.drawable.phone_number)
-                dialog.edit.setText(user!!.phone?.let { it } ?: "phone")
+                dialog.edit.setText(user!!.phone?.let { it } ?: "")
 
             }
         }

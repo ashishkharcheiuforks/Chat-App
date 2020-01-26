@@ -18,6 +18,7 @@ import com.example.android.kotlinchatapp.ui.model.ChatList
 import com.example.android.kotlinchatapp.ui.notification.Token
 import com.example.android.kotlinchatapp.utils.FormatDate
 import com.example.android.kotlinchatapp.utils.FormatDate.dateFormatter_v3
+import com.example.android.kotlinchatapp.utils.SpacingItemDecoration
 import com.example.android.myapplication.Adapter.UserAdapter
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -37,6 +38,7 @@ private const val ARG_PARAM2 = "param2"
  */
 class ChatsFragment : Fragment() {
     private var recycle_View: RecyclerView? = null
+    private val spacingItemDecoration= SpacingItemDecoration()
 
     private var userAdapter: UserAdapter? = null
     private var mUsers: MutableList<User>? = null
@@ -56,6 +58,7 @@ class ChatsFragment : Fragment() {
          v = inflater.inflate(R.layout.fragment_chats, container, false)
         chatsViewModel = ChatsViewModel()
         v.recycle_View?.layoutManager = LinearLayoutManager(context)!!
+        v.recycle_View.addItemDecoration(SpacingItemDecoration())
         mUsers = ArrayList()
         userslist = ArrayList()
         test = emptyList()
@@ -128,7 +131,7 @@ class ChatsFragment : Fragment() {
         reference = FirebaseDatabase.getInstance().getReference("Users")
         reference.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
-
+                v.progress_bar.visibility= GONE
             }
 
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -155,6 +158,7 @@ class ChatsFragment : Fragment() {
                     finalChatListUsers!!.add(user)
             }
         }
+        v.progress_bar.visibility= GONE
         v.container.visibility= if (mUsers!!.isEmpty()) VISIBLE else GONE
 
         userAdapter= UserAdapter(context!!,finalChatListUsers!!,true)
