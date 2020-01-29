@@ -88,6 +88,30 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/bar_layout">
 
+        <LinearLayout
+                android:id="@+id/greeting_container"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/linear"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+            <ImageView
+                    android:layout_width="@dimen/_90sdp"
+                    android:layout_height="@dimen/_90sdp"
+                android:src="@drawable/greets_icon"
+                    android:layout_gravity="center"/>
+            <TextView
+                    android:id="@+id/greeting_message"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Say something to "
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textStyle="bold"
+                    android:layout_gravity="center"/>
+        </LinearLayout>
+
         <ImageView
                 android:id="@+id/backgroundImage"
                 android:layout_width="match_parent"

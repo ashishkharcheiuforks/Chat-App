@@ -161,7 +161,7 @@ class ChatsFragment : Fragment() {
         v.progress_bar.visibility= GONE
         v.container.visibility= if (mUsers!!.isEmpty()) VISIBLE else GONE
 
-        userAdapter= UserAdapter(context!!,finalChatListUsers!!,true)
+        userAdapter= UserAdapter(context!!,if (finalChatListUsers!!.size>0) finalChatListUsers!! else ArrayList(),true)
         v.recycle_View.adapter=userAdapter
     }
 

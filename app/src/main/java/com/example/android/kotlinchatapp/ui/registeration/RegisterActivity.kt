@@ -41,8 +41,7 @@ class RegisterActivity : AppCompatActivity(), RegistraionNavigator {
         progressDialog.setMessage("loading")
         progressDialog.setCancelable(false)
         registerationViewModel.navigateToLogin.observe(this, Observer {
-            startActivity(Intent(this, LoginActivity::class.java))
-            finish()
+            onBackPressed()
         })
         registerationViewModel.error.observe(this, Observer {
             Toasty.error(applicationContext, it, Toasty.LENGTH_LONG).show()

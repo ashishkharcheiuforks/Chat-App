@@ -33,29 +33,33 @@ class ChatApplication : Application(), LifecycleObserver {
     @RequiresApi(Build.VERSION_CODES.O)
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun onStart() {
-        if (logedIn)
-            setStatus("online")
+        firebaseUser = mAuth.currentUser
+        firebaseUser?.let {
+            setStatus("online")}
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun onResume() {
-        if (logedIn)
-            setStatus("online")
+        firebaseUser = mAuth.currentUser
+        firebaseUser?.let {
+            setStatus("online")}
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     fun onPause() {
-        if (logedIn)
-            setStatus("offline")
+        firebaseUser = mAuth.currentUser
+        firebaseUser?.let {
+            setStatus("offline")}
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     fun onStop() {
-        if (logedIn)
-            setStatus("offline")
+        firebaseUser = mAuth.currentUser
+        firebaseUser?.let {
+            setStatus("offline")}
 
     }
 

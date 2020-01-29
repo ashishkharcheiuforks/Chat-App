@@ -13,7 +13,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".ui.splash.SplashActivity">
+            tools:context=".ui.splash.SplashActivity"
+            android:background="@drawable/background">
 
         <ImageView
                 android:id="@+id/splash_main_icon"
@@ -24,7 +25,8 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintVertical_bias=".2" />
+                app:layout_constraintVertical_bias=".2"
+                android:transitionName="logo"/>
 
         <ImageView
                 android:id="@+id/splash_icon_sender"

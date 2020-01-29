@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.animation.AnimationUtils
+import androidx.core.app.ActivityOptionsCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -11,6 +12,7 @@ import com.example.android.kotlinchatapp.R
 import com.example.android.kotlinchatapp.databinding.ActivitySplashBinding
 import com.example.android.kotlinchatapp.ui.activities.HomeActivity
 import com.example.android.kotlinchatapp.ui.login.LoginActivity
+import kotlinx.android.synthetic.main.activity_splash.*
 
 class SplashActivity : AppCompatActivity() {
     lateinit var binding:ActivitySplashBinding
@@ -35,8 +37,14 @@ class SplashActivity : AppCompatActivity() {
                 startActivity(Intent(this,HomeActivity::class.java))
             }
             else{
-                startActivity(Intent(this,
-                    LoginActivity::class.java))
+                val intent=Intent(this,
+                    LoginActivity::class.java)
+                val option = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                    this,
+                    splash_main_icon,
+                    "logo"
+                )
+                startActivity(intent, option.toBundle())
 
             }
         })

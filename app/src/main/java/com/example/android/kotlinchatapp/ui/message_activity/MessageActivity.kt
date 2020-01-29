@@ -1,5 +1,6 @@
 package com.example.android.kotlinchatapp.ui.message_activity
 
+import android.annotation.SuppressLint
 import retrofit2.*
 import android.app.Activity
 import android.app.ProgressDialog
@@ -14,6 +15,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityOptionsCompat
@@ -31,7 +33,6 @@ import com.example.android.kotlinchatapp.ui.fragments.APIService
 import com.example.android.kotlinchatapp.ui.notification.*
 import com.example.android.kotlinchatapp.ui.message_activity.adapter.MessageAdapter
 import com.example.android.kotlinchatapp.ui.message_activity.model.BackgroundImageModel
-import com.example.android.kotlinchatapp.ui.notify.MySingleton
 import com.example.android.kotlinchatapp.ui.profile_photo.ProfilePhotoActivity
 import com.example.android.kotlinchatapp.ui.user_profile.UserDetailsActivity
 import com.google.android.gms.tasks.Continuation
@@ -168,9 +169,11 @@ class MessageActivity : AppCompatActivity() {
 
         })
         reference.addValueEventListener(object : ValueEventListener {
+            @SuppressLint("SetTextI18n")
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 user = dataSnapshot.getValue(User::class.java)
                 username.text = user!!.userName
+                greeting_message.text="${greeting_message.text} ${user!!.userName?:""}"
                 if (user!!.status.equals("online"))
                     userStatus.text = user!!.status
                 else
@@ -389,7 +392,8 @@ class MessageActivity : AppCompatActivity() {
                         }
 
                     }
-                    progress_bar.visibility= View.GONE
+                    greeting_container.visibility=if (mChats.isEmpty()) VISIBLE else GONE
+                    progress_bar.visibility= GONE
 
                     recycle_view.adapter = messageAdapter
                 }
@@ -397,7 +401,7 @@ class MessageActivity : AppCompatActivity() {
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                progress_bar.visibility= View.GONE
+                progress_bar.visibility= GONE
 
             }
         })
@@ -455,6 +459,7 @@ class MessageActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun uploadBackGroundImage() {
+        progressDialog.show()
         if (filePath != null) {
             val ref = storageReference?.child("  uploads/" + UUID.randomUUID().toString())
             val uploadTask = ref?.putFile(filePath!!)
@@ -463,8 +468,9 @@ class MessageActivity : AppCompatActivity() {
                 uploadTask?.continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->
                     if (!task.isSuccessful) {
                         task.exception?.let {
-                            throw it
                             progressDialog.hide()
+                            throw it
+
                         }
                     }
                     return@Continuation ref.downloadUrl
