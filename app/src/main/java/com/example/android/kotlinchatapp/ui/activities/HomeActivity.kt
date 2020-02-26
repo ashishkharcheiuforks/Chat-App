@@ -38,7 +38,7 @@ class HomeActivity : AppCompatActivity() {
     lateinit var mFirebaseDatabase: FirebaseDatabase
     lateinit var mAuth: FirebaseAuth
     internal var mAuthStateListener: FirebaseAuth.AuthStateListener? = null
-    lateinit var userID: String
+     var userID: String?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,7 +52,7 @@ class HomeActivity : AppCompatActivity() {
         reference = mFirebaseDatabase.reference
         firebaseUser = mAuth.currentUser
         userID = firebaseUser!!.uid
-        reference=FirebaseDatabase.getInstance().getReference("Users").child(userID)
+        reference=FirebaseDatabase.getInstance().getReference("Users").child(userID?:"")
         reference.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
             Toasty.error(applicationContext,p0.message,Toasty.LENGTH_LONG).show()
@@ -89,13 +89,16 @@ class HomeActivity : AppCompatActivity() {
         return true
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.logout -> {
                 FirebaseAuth.getInstance().signOut()
                 val i = Intent(this, LoginActivity::class.java)
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(i)
-                finish()
+                setStatus("offline")
                 return true
             }
         }
@@ -104,16 +107,17 @@ class HomeActivity : AppCompatActivity() {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun setStatus(status:String){
-        reference=FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser?.uid!!)
-        val hash:HashMap<String,String> =HashMap<String,String>()
+    private fun setStatus(status: String) {
+        reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser?.uid!!)
+        val hash: java.util.HashMap<String, String> = java.util.HashMap<String, String>()
 
-        val date=LocalDateTime.now()
-        val formater=DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
-        val formatedDate=date.format(formater)
-        hash.put("status",status)
+        val date = LocalDateTime.now()
+        val formater = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm a")
+        val formatedDate = date.format(formater)
+        hash.put("status", status)
         reference.child("status").setValue(status)
         reference.child("lastSeen").setValue(formatedDate)
+
     }
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onStart() {

@@ -24,6 +24,7 @@
                 android:background="@color/colorPrimaryDark"
                 android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
                 app:popupTheme="@style/MenuStyle">
+
             <ProgressBar
                     android:id="@+id/toolbar_progress_bar"
                     android:layout_width="25dp"
@@ -33,6 +34,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
+
             <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/profile_image"
                     android:layout_width="40dp"
@@ -55,10 +57,10 @@
                         android:textSize="15dp"
                         android:textStyle="bold"
                         android:transitionName="@string/userName"
-                        tools:text="george"
-                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toTopOf="@id/userStatus"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintBottom_toTopOf="@id/userStatus"/>
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="george" />
 
                 <TextView
                         android:id="@+id/userStatus"
@@ -69,10 +71,10 @@
                         android:textColor="#CCCACA"
                         android:textSize="12dp"
                         android:transitionName="@string/userStatus"
-                        tools:text="online"
-                        app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/username"/>
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/username"
+                        tools:text="online" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -90,26 +92,28 @@
 
         <LinearLayout
                 android:id="@+id/greeting_container"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toTopOf="@+id/linear"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                app:layout_constraintBottom_toTopOf="@+id/linear"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
             <ImageView
                     android:layout_width="@dimen/_90sdp"
                     android:layout_height="@dimen/_90sdp"
-                android:src="@drawable/greets_icon"
-                    android:layout_gravity="center"/>
+                    android:layout_gravity="center"
+                    android:src="@drawable/greets_icon" />
+
             <TextView
                     android:id="@+id/greeting_message"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:text="Say something to "
                     android:textColor="@color/colorPrimaryDark"
-                    android:textStyle="bold"
-                    android:layout_gravity="center"/>
+                    android:textStyle="bold" />
         </LinearLayout>
 
         <ImageView
@@ -123,7 +127,7 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:fillViewport="true"
-                app:layout_constraintBottom_toTopOf="@id/linear"
+                app:layout_constraintBottom_toTopOf="@id/dotLoader"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -141,13 +145,27 @@
 
         </FrameLayout>
 
+        <com.bhargavms.dotloader.DotLoader
+                android:id="@+id/dotLoader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_20sdp"
+                app:color_array="@array/dot_color"
+                app:layout_constraintBottom_toTopOf="@id/linear"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/container"
+                android:visibility="gone"
+                tools:visibility="visible"
+                app:dot_radius="@dimen/_4sdp"
+                app:number_of_dots="3"/>
+
         <RelativeLayout
                 android:id="@+id/linear"
 
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:layout_margin="@dimen/_10sdp"
+                android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
@@ -172,8 +190,8 @@
                         android:layout_marginStart="5dp"
                         android:layout_toStartOf="@id/send_image"
                         android:background="@android:color/transparent"
-                        android:textCursorDrawable="@color/colorPrimary"
-                        android:hint="type a message..." />
+                        android:hint="type a message..."
+                        android:textCursorDrawable="@color/colorPrimary" />
 
 
                 <ImageView
@@ -193,6 +211,7 @@
                     android:background="@drawable/ic_send" />
         </RelativeLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
+
     <ProgressBar
             android:id="@+id/progress_bar"
             android:layout_width="wrap_content"
@@ -202,6 +221,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.constraintlayout.widget.Guideline
             android:id="@+id/start_guideline"
             android:layout_width="wrap_content"

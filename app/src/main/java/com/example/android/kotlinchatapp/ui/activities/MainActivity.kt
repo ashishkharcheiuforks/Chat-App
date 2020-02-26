@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
@@ -11,6 +12,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import com.bumptech.glide.Glide
 import com.example.android.kotlinchatapp.ui.model.User
 import com.example.android.kotlinchatapp.R
@@ -25,8 +27,11 @@ import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.UploadTask
+import es.dmoral.toasty.Toasty
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.IOException
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -169,17 +174,47 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.logout -> {
-                FirebaseAuth.getInstance().signOut()
-                val i = Intent(this, LoginActivity::class.java)
-                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(i)
+                setStatus("offline")
             }
         }
         return false
+
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun setStatus(status: String) {
+        reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser?.uid!!)
+        val hash: HashMap<String, String> = HashMap<String, String>()
+
+        val date = LocalDateTime.now()
+        val formater = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm a")
+        val formatedDate = date.format(formater)
+        hash.put("status", status)
+        reference.child("status").setValue(status).addOnCompleteListener {statusTask->
+            if (statusTask.isSuccessful){
+                reference.child("lastSeen").setValue(formatedDate).addOnCompleteListener {lastSeenTask->
+                    if (lastSeenTask.isSuccessful){
+                        FirebaseAuth.getInstance().signOut()
+                        val i = Intent(this, LoginActivity::class.java)
+                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        startActivity(i)
+                    }
+                    else
+                        Toasty.error(this,"error occurred",Toasty.LENGTH_LONG).show()
+                }.addOnFailureListener {
+                    Toasty.error(this,"error occurred ${it.message}",Toasty.LENGTH_LONG).show()
+                }
+            }
+            else
+                Toasty.error(this,"error occurred",Toasty.LENGTH_LONG).show()
+        }.addOnFailureListener {
+            Toasty.error(this,"error occurred ${it.message}",Toasty.LENGTH_LONG).show()
+        }
 
     }
 

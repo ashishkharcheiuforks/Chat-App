@@ -70,4 +70,5 @@ dependencies {
     kapt 'com.android.databinding:compiler:3.4.2'
     implementation 'joda-time:joda-time:2.9.9'
     implementation 'com.android.volley:volley:1.1.0'
+    implementation 'com.github.bhargavms:DotLoader:1.0.3'
 }

@@ -19,14 +19,18 @@ class ChatApplication : Application(), LifecycleObserver {
     internal var firebaseUser: FirebaseUser? = null
     lateinit var mAuth: FirebaseAuth
     var logedIn = true
+    init {
+    }
     override fun onCreate() {
         super.onCreate()
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true)
         mAuth = FirebaseAuth.getInstance()
         firebaseUser = mAuth.currentUser
         firebaseUser?.let {
             reference =
                 FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser!!.uid)
+
         } ?: kotlin.run { logedIn = false }
     }
 

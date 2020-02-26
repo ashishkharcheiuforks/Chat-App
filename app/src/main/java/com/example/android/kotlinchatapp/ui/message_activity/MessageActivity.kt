@@ -11,6 +11,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.ContactsContract.CommonDataKinds.Website.URL
 import android.provider.MediaStore
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -70,7 +72,7 @@ class MessageActivity : AppCompatActivity() {
     internal var firebaseUser: FirebaseUser? = null
     lateinit var reference: DatabaseReference
     var referenceBackground: DatabaseReference? = null
-
+    var typingReference: DatabaseReference? = null
     lateinit var i: Intent
     lateinit var use: User
     var user: User? = null
@@ -82,7 +84,7 @@ class MessageActivity : AppCompatActivity() {
     lateinit var userId: String
     lateinit var seenListener: ValueEventListener
     var notify = false
-
+    lateinit var seenMessageReference:DatabaseReference
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -155,14 +157,14 @@ class MessageActivity : AppCompatActivity() {
             .child(userId).child("imageURL")
         userImageReference.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
-                toolbar_progress_bar.visibility=GONE
+                toolbar_progress_bar.visibility = GONE
             }
 
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val userImage = dataSnapshot.getValue(String::class.java)
                 Glide.with(applicationContext).load(userImage)
                     .error(R.drawable.profile_default_icon).into(profile_image)
-                toolbar_progress_bar.visibility=GONE
+                toolbar_progress_bar.visibility = GONE
 
                 readMessage(firebaseUser!!.uid, userId, userImage!!)
             }
@@ -173,7 +175,7 @@ class MessageActivity : AppCompatActivity() {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 user = dataSnapshot.getValue(User::class.java)
                 username.text = user!!.userName
-                greeting_message.text="${greeting_message.text} ${user!!.userName?:""}"
+                greeting_message.text = "Say something to ${user!!.userName ?: ""}"
                 if (user!!.status.equals("online"))
                     userStatus.text = user!!.status
                 else
@@ -219,6 +221,60 @@ class MessageActivity : AppCompatActivity() {
         })
         seenMessage(userId)
         send_image.setOnClickListener { launchGallery(PICK_IMAGE_REQUEST) }
+        typingReference =
+            FirebaseDatabase.getInstance().getReference("Users").child(userId).child("typingTo")
+        typingReference!!.addValueEventListener(object :ValueEventListener{
+            override fun onCancelled(p0: DatabaseError) {
+            }
+
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val typingTo = dataSnapshot.getValue(String::class.java)
+                if (typingTo.equals(firebaseUser!!.uid)){
+                    if (dotLoader.visibility!= VISIBLE){
+                        dotLoader.visibility= VISIBLE
+                    }
+                }
+                else{
+                    if (dotLoader.visibility!= GONE){
+                        dotLoader.visibility= GONE
+                    }
+                }
+            }
+
+        })
+        text_send.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                if (s!!.isEmpty()) {
+                    typingReference =
+                        FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser!!.uid)
+                    typingReference!!.child("typingTo").setValue("noOne")
+                }
+                else{
+                    typingReference =
+                        FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser!!.uid)
+                    typingReference!!.child("typingTo").setValue(userId)
+                }
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (s!!.isEmpty()) {
+                    typingReference =
+                        FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser!!.uid)
+                    typingReference!!.child("typingTo").setValue("noOne")
+                }
+                else{
+                    typingReference =
+                        FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser!!.uid)
+                    typingReference!!.child("typingTo").setValue(userId)
+                }
+            }
+
+        })
+
     }
 
     private fun navigateToUserProfile() {
@@ -235,7 +291,7 @@ class MessageActivity : AppCompatActivity() {
     }
 
     fun seenMessage(id: String) {
-        val seenMessageReference = FirebaseDatabase.getInstance().getReference("Chats")
+        seenMessageReference = FirebaseDatabase.getInstance().getReference("Chats")
         seenListener = seenMessageReference.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
                 TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -268,18 +324,18 @@ class MessageActivity : AppCompatActivity() {
         hashMap["date"] = formatedDate
 
         reference.child("Chats").push().setValue(hashMap)
-        val currentDate=FormatDate.currentdateinDdMmYyyyHhMmA()
+        val currentDate = FormatDate.currentdateinDdMmYyyyHhMmA()
         var chatListReference =
             FirebaseDatabase.getInstance().getReference("ChatList").child(firebaseUser!!.uid)
                 .child(userId)
-        chatListReference.addListenerForSingleValueEvent(object :ValueEventListener{
+        chatListReference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
 
             }
 
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 chatListReference.child("date").setValue(currentDate)
-                if (!dataSnapshot.exists()){
+                if (!dataSnapshot.exists()) {
                     chatListReference.child("id").setValue(userId)
                 }
 
@@ -290,14 +346,14 @@ class MessageActivity : AppCompatActivity() {
         var chatListReference2 =
             FirebaseDatabase.getInstance().getReference("ChatList").child(userId)
                 .child(firebaseUser!!.uid)
-        chatListReference2.addListenerForSingleValueEvent(object :ValueEventListener{
+        chatListReference2.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
 
             }
 
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 chatListReference2.child("date").setValue(currentDate)
-                if (!dataSnapshot.exists()){
+                if (!dataSnapshot.exists()) {
                     chatListReference2.child("id").setValue(firebaseUser!!.uid)
                 }
 
@@ -392,8 +448,8 @@ class MessageActivity : AppCompatActivity() {
                         }
 
                     }
-                    greeting_container.visibility=if (mChats.isEmpty()) VISIBLE else GONE
-                    progress_bar.visibility= GONE
+                    greeting_container.visibility = if (mChats.isEmpty()) VISIBLE else GONE
+                    progress_bar.visibility = GONE
 
                     recycle_view.adapter = messageAdapter
                 }
@@ -401,7 +457,7 @@ class MessageActivity : AppCompatActivity() {
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                progress_bar.visibility= GONE
+                progress_bar.visibility = GONE
 
             }
         })
@@ -571,7 +627,10 @@ class MessageActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onPause() {
         super.onPause()
-        reference.removeEventListener(seenListener)
+        seenMessageReference.removeEventListener(seenListener)
+        typingReference =
+            FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser!!.uid)
+        typingReference!!.child("typingTo").setValue("noOne")
 //        setStatus("offline")
     }
 

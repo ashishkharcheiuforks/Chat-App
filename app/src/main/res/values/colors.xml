@@ -5,5 +5,9 @@
     <color name="colorAccent">#00574B</color>
     <color name="un_read_message">#00C41F</color>
     <color name="color_grey">#777777</color>
-
+<array name="dot_color">
+    <item>#03a9f4</item>
+    <item>#777777</item>
+    <item>#00574B</item>
+</array>
 </resources>
