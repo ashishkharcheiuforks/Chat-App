@@ -82,7 +82,7 @@ class ChatsFragment : Fragment() {
 
         })
         chatsViewModel.updateToken()
-        chatsViewModel.token.observe(this, Observer {
+        chatsViewModel.token.observe(viewLifecycleOwner, Observer {
             updateToken(it)
         })
 
